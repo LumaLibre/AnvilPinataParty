@@ -1,0 +1,3 @@
+### In this folder...
+
+Place your `Example.jar` file(s) and then run `./gradlew setupVineFlower` and then `./gradlew decompileAndApplyPatches`.

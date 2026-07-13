@@ -1,0 +1,32 @@
+# Gradle files
+.gradle/
+build/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Temporary git directory used for patch generation
+.patch-git/
+
+# Generated/decompiled sources (not tracked - use patches instead)
+sources/generated/
+# Local libraries
+sources/*.jar
+
+# Decompiler downloads
+build/decompiler/
+
+!patches/**/*.patch
+
+# Source code
+api/
+core/
+nms/
+src/
+
+# OS files
+.DS_Store
