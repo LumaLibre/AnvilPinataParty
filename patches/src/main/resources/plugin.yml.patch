@@ -1,0 +1,13 @@
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+index ac337bf..7e033c9 100644
+--- a/src/main/resources/plugin.yml
++++ b/src/main/resources/plugin.yml
+@@ -4,4 +4,5 @@ version: 2.69.6
+ api-version: 1.13
+ main: me.hexedhero.pp.PinataParty
+ authors: [Indyuce, HexedHero]
+-softdepend: [Votifier, Vault, PlaceholderAPI, CrackShot, HuskSync, VotifierPlus]
+\ No newline at end of file
++softdepend: [Votifier, Vault, PlaceholderAPI, CrackShot, HuskSync, VotifierPlus]
++folia-supported: true # Luma - Folia support
+\ No newline at end of file

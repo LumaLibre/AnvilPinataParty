@@ -1,0 +1,39 @@
+diff --git a/src/main/java/me/hexedhero/pp/objects/CommandReader.java b/src/main/java/me/hexedhero/pp/objects/CommandReader.java
+index ccb0504..a030c41 100644
+--- a/src/main/java/me/hexedhero/pp/objects/CommandReader.java
++++ b/src/main/java/me/hexedhero/pp/objects/CommandReader.java
+@@ -9,6 +9,7 @@ import java.util.Random;
+ import java.util.Set;
+ import me.hexedhero.pp.PinataParty;
+ import me.hexedhero.pp.utils.Common;
++import me.hexedhero.pp.utils.ScheduleHelper;
+ import org.bukkit.Bukkit;
+ import org.bukkit.configuration.ConfigurationSection;
+ import org.bukkit.entity.Player;
+@@ -30,7 +31,7 @@ public class CommandReader {
+ 
+    public void dispatchCommands() {
+       for (CommandReader.CommandMap var2 : this.maps) {
+-         boolean var3 = var2.dispatchCommands((Player)null, false);
++         boolean var3 = var2.dispatchCommands(null, false);
+          if (!var3) {
+             return;
+          }
+@@ -113,7 +114,7 @@ public class CommandReader {
+                   if (var6 != null && !var6.trim().isEmpty()) {
+                      String var7 = PinataParty.getInstance().getPlaceholderParser().parse(var1, var6);
+                      if (var7 != null && !var7.trim().isEmpty()) {
+-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), var7);
++                        ScheduleHelper.runTaskGlobal(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), var7)); // Luma - Folia support
+                      }
+                   }
+                } else {
+@@ -121,7 +122,7 @@ public class CommandReader {
+                      if (var4 != null && !var4.trim().isEmpty()) {
+                         String var5 = PinataParty.getInstance().getPlaceholderParser().parse(var1, var4);
+                         if (var5 != null && !var5.trim().isEmpty()) {
+-                           Bukkit.dispatchCommand(Bukkit.getConsoleSender(), var5);
++                           ScheduleHelper.runTaskGlobal(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), var5)); // Luma - Folia support
+                         }
+                      }
+                   }

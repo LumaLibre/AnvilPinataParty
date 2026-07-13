@@ -1,0 +1,63 @@
+diff --git a/src/main/java/me/hexedhero/pp/commands/PinataPartyCommand.java b/src/main/java/me/hexedhero/pp/commands/PinataPartyCommand.java
+index 4ba4c25..da7fc86 100644
+--- a/src/main/java/me/hexedhero/pp/commands/PinataPartyCommand.java
++++ b/src/main/java/me/hexedhero/pp/commands/PinataPartyCommand.java
+@@ -10,6 +10,7 @@ import me.hexedhero.pp.entities.Pinata;
+ import me.hexedhero.pp.listeners.VotifierListener;
+ import me.hexedhero.pp.objects.PluginMessage;
+ import me.hexedhero.pp.utils.PluginInformation;
++import me.hexedhero.pp.utils.ScheduleHelper;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Location;
+@@ -252,22 +253,27 @@ public class PinataPartyCommand extends Command {
+                   switch (var4.toUpperCase()) {
+                      case "ADD":
+                         var1.sendMessage(ChatColor.GREEN + "Adding " + var5 + " vote(s) for " + var3[1]);
+-                        Bukkit.getScheduler()
+-                           .runTaskAsynchronously(
+-                              PinataParty.getInstance(), () -> PinataParty.getInstance().increaseVotes(Bukkit.getOfflinePlayer(var3[1]), var6, false)
+-                           );
++                        // Luma start - Folia support
++                        ScheduleHelper.runTaskAsync(() -> {
++                           PinataParty.getInstance().increaseVotes(Bukkit.getOfflinePlayer(var3[1]), var6, false);
++                        });
++                        // Luma end - Folia support
+                         break;
+                      case "REMOVE":
+                         var1.sendMessage(ChatColor.GREEN + "Removing " + var5 + " vote(s) for " + var3[1]);
+-                        Bukkit.getScheduler()
+-                           .runTaskAsynchronously(
+-                              PinataParty.getInstance(), () -> PinataParty.getInstance().decreaseVotes(Bukkit.getOfflinePlayer(var3[1]), var6)
+-                           );
++                        // Luma start - Folia support
++                        ScheduleHelper.runTaskAsync(() -> {
++                           PinataParty.getInstance().decreaseVotes(Bukkit.getOfflinePlayer(var3[1]), var6);
++                        });
++                        // Luma end - Folia support
+                         break;
+                      case "SET":
+                         var1.sendMessage(ChatColor.GREEN + "Setting " + var5 + " vote(s) for " + var3[1]);
+-                        Bukkit.getScheduler()
+-                           .runTaskAsynchronously(PinataParty.getInstance(), () -> PinataParty.getInstance().setVotes(Bukkit.getOfflinePlayer(var3[1]), var6));
++                        // Luma start - Folia support
++                        ScheduleHelper.runTaskAsync(() -> {
++                           PinataParty.getInstance().setVotes(Bukkit.getOfflinePlayer(var3[1]), var6);
++                        });
++                        // Luma end - Folia support
+                   }
+ 
+                   return true;
+@@ -317,10 +323,10 @@ public class PinataPartyCommand extends Command {
+ 
+    public List<String> tabComplete(CommandSender var1, String var2, String[] var3) {
+       if (!var1.hasPermission("pinataparty.admin")) {
+-         return null;
++         return List.of(); // Luma - VineFlower decompilation: Returning null on @NotNull method?
+       }
+ 
+-      ArrayList var4 = new ArrayList();
++      ArrayList<String> var4 = new ArrayList<>(); // Luma - VineFlower decompilation
+       if (var3.length == 1) {
+          var4.add("summon");
+          var4.add("spawn");

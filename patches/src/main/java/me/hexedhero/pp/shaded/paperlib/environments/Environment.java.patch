@@ -1,0 +1,174 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/Environment.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/Environment.java
+deleted file mode 100644
+index f412da4..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/Environment.java
++++ /dev/null
+@@ -1,168 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.environments;
+-
+-import java.util.Locale;
+-import java.util.concurrent.CompletableFuture;
+-import java.util.regex.MatchResult;
+-import java.util.regex.Matcher;
+-import java.util.regex.Pattern;
+-import me.hexedhero.pp.shaded.paperlib.features.asyncchunks.AsyncChunks;
+-import me.hexedhero.pp.shaded.paperlib.features.asyncchunks.AsyncChunksSync;
+-import me.hexedhero.pp.shaded.paperlib.features.asyncteleport.AsyncTeleport;
+-import me.hexedhero.pp.shaded.paperlib.features.asyncteleport.AsyncTeleportSync;
+-import me.hexedhero.pp.shaded.paperlib.features.bedspawnlocation.BedSpawnLocation;
+-import me.hexedhero.pp.shaded.paperlib.features.bedspawnlocation.BedSpawnLocationSync;
+-import me.hexedhero.pp.shaded.paperlib.features.blockstatesnapshot.BlockStateSnapshot;
+-import me.hexedhero.pp.shaded.paperlib.features.blockstatesnapshot.BlockStateSnapshotBeforeSnapshots;
+-import me.hexedhero.pp.shaded.paperlib.features.blockstatesnapshot.BlockStateSnapshotNoOption;
+-import me.hexedhero.pp.shaded.paperlib.features.blockstatesnapshot.BlockStateSnapshotResult;
+-import me.hexedhero.pp.shaded.paperlib.features.chunkisgenerated.ChunkIsGenerated;
+-import me.hexedhero.pp.shaded.paperlib.features.chunkisgenerated.ChunkIsGeneratedApiExists;
+-import me.hexedhero.pp.shaded.paperlib.features.chunkisgenerated.ChunkIsGeneratedUnknown;
+-import me.hexedhero.pp.shaded.paperlib.features.inventoryholdersnapshot.InventoryHolderSnapshot;
+-import me.hexedhero.pp.shaded.paperlib.features.inventoryholdersnapshot.InventoryHolderSnapshotBeforeSnapshots;
+-import me.hexedhero.pp.shaded.paperlib.features.inventoryholdersnapshot.InventoryHolderSnapshotNoOption;
+-import me.hexedhero.pp.shaded.paperlib.features.inventoryholdersnapshot.InventoryHolderSnapshotResult;
+-import org.bukkit.Bukkit;
+-import org.bukkit.Chunk;
+-import org.bukkit.Location;
+-import org.bukkit.World;
+-import org.bukkit.block.Block;
+-import org.bukkit.entity.Entity;
+-import org.bukkit.entity.Player;
+-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+-import org.bukkit.inventory.Inventory;
+-
+-public abstract class Environment {
+-   private final int minecraftVersion;
+-   private final int minecraftPatchVersion;
+-   private final int minecraftPreReleaseVersion;
+-   private final int minecraftReleaseCandidateVersion;
+-   protected AsyncChunks asyncChunksHandler = new AsyncChunksSync();
+-   protected AsyncTeleport asyncTeleportHandler = new AsyncTeleportSync();
+-   protected ChunkIsGenerated isGeneratedHandler = new ChunkIsGeneratedUnknown();
+-   protected BlockStateSnapshot blockStateSnapshotHandler;
+-   protected InventoryHolderSnapshot inventoryHolderSnapshotHandler;
+-   protected BedSpawnLocation bedSpawnLocationHandler = new BedSpawnLocationSync();
+-
+-   public Environment() {
+-      this(Bukkit.getVersion());
+-   }
+-
+-   Environment(String var1) {
+-      Pattern var2 = Pattern.compile("(?i)\\(MC: (\\d)\\.(\\d+)\\.?(\\d+?)?(?: (Pre-Release|Release Candidate) )?(\\d)?\\)");
+-      Matcher var3 = var2.matcher(var1);
+-      int var4 = 0;
+-      int var5 = 0;
+-      int var6 = -1;
+-      int var7 = -1;
+-      if (var3.find()) {
+-         MatchResult var8 = var3.toMatchResult();
+-
+-         try {
+-            var4 = Integer.parseInt(var8.group(2), 10);
+-         } catch (Exception var12) {
+-         }
+-
+-         if (var8.groupCount() >= 3) {
+-            try {
+-               var5 = Integer.parseInt(var8.group(3), 10);
+-            } catch (Exception var11) {
+-            }
+-         }
+-
+-         if (var8.groupCount() >= 5) {
+-            try {
+-               int var9 = Integer.parseInt(var3.group(5));
+-               if (var3.group(4).toLowerCase(Locale.ENGLISH).contains("pre")) {
+-                  var6 = var9;
+-               } else {
+-                  var7 = var9;
+-               }
+-            } catch (Exception var10) {
+-            }
+-         }
+-      }
+-
+-      this.minecraftVersion = var4;
+-      this.minecraftPatchVersion = var5;
+-      this.minecraftPreReleaseVersion = var6;
+-      this.minecraftReleaseCandidateVersion = var7;
+-      if (this.isVersion(13, 1)) {
+-         this.isGeneratedHandler = new ChunkIsGeneratedApiExists();
+-      }
+-
+-      if (!this.isVersion(12)) {
+-         this.blockStateSnapshotHandler = new BlockStateSnapshotBeforeSnapshots();
+-         this.inventoryHolderSnapshotHandler = new InventoryHolderSnapshotBeforeSnapshots();
+-      } else {
+-         this.blockStateSnapshotHandler = new BlockStateSnapshotNoOption();
+-         this.inventoryHolderSnapshotHandler = new InventoryHolderSnapshotNoOption();
+-      }
+-   }
+-
+-   public abstract String getName();
+-
+-   public CompletableFuture<Chunk> getChunkAtAsync(World var1, int var2, int var3, boolean var4) {
+-      return this.asyncChunksHandler.getChunkAtAsync(var1, var2, var3, var4, false);
+-   }
+-
+-   public CompletableFuture<Chunk> getChunkAtAsync(World var1, int var2, int var3, boolean var4, boolean var5) {
+-      return this.asyncChunksHandler.getChunkAtAsync(var1, var2, var3, var4, var5);
+-   }
+-
+-   public CompletableFuture<Chunk> getChunkAtAsyncUrgently(World var1, int var2, int var3, boolean var4) {
+-      return this.asyncChunksHandler.getChunkAtAsync(var1, var2, var3, var4, true);
+-   }
+-
+-   public CompletableFuture<Boolean> teleport(Entity var1, Location var2, TeleportCause var3) {
+-      return this.asyncTeleportHandler.teleportAsync(var1, var2, var3);
+-   }
+-
+-   public boolean isChunkGenerated(World var1, int var2, int var3) {
+-      return this.isGeneratedHandler.isChunkGenerated(var1, var2, var3);
+-   }
+-
+-   public BlockStateSnapshotResult getBlockState(Block var1, boolean var2) {
+-      return this.blockStateSnapshotHandler.getBlockState(var1, var2);
+-   }
+-
+-   public InventoryHolderSnapshotResult getHolder(Inventory var1, boolean var2) {
+-      return this.inventoryHolderSnapshotHandler.getHolder(var1, var2);
+-   }
+-
+-   public CompletableFuture<Location> getBedSpawnLocationAsync(Player var1, boolean var2) {
+-      return this.bedSpawnLocationHandler.getBedSpawnLocationAsync(var1, var2);
+-   }
+-
+-   public boolean isVersion(int var1) {
+-      return this.isVersion(var1, 0);
+-   }
+-
+-   public boolean isVersion(int var1, int var2) {
+-      return this.minecraftVersion > var1 || this.minecraftVersion >= var1 && this.minecraftPatchVersion >= var2;
+-   }
+-
+-   public int getMinecraftVersion() {
+-      return this.minecraftVersion;
+-   }
+-
+-   public int getMinecraftPatchVersion() {
+-      return this.minecraftPatchVersion;
+-   }
+-
+-   public int getMinecraftPreReleaseVersion() {
+-      return this.minecraftPreReleaseVersion;
+-   }
+-
+-   public int getMinecraftReleaseCandidateVersion() {
+-      return this.minecraftReleaseCandidateVersion;
+-   }
+-
+-   public boolean isSpigot() {
+-      return false;
+-   }
+-
+-   public boolean isPaper() {
+-      return false;
+-   }
+-}

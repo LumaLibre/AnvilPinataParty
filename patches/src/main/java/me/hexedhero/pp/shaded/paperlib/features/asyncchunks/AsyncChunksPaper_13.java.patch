@@ -1,0 +1,18 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncchunks/AsyncChunksPaper_13.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncchunks/AsyncChunksPaper_13.java
+deleted file mode 100644
+index 06a6c06..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncchunks/AsyncChunksPaper_13.java
++++ /dev/null
+@@ -1,12 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.asyncchunks;
+-
+-import java.util.concurrent.CompletableFuture;
+-import org.bukkit.Chunk;
+-import org.bukkit.World;
+-
+-public class AsyncChunksPaper_13 implements AsyncChunks {
+-   @Override
+-   public CompletableFuture<Chunk> getChunkAtAsync(World var1, int var2, int var3, boolean var4, boolean var5) {
+-      return var1.getChunkAtAsync(var2, var3, var4);
+-   }
+-}

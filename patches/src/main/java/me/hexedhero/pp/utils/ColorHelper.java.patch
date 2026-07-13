@@ -1,0 +1,36 @@
+diff --git a/src/main/java/me/hexedhero/pp/utils/ColorHelper.java b/src/main/java/me/hexedhero/pp/utils/ColorHelper.java
+index b0ede24..3efb720 100644
+--- a/src/main/java/me/hexedhero/pp/utils/ColorHelper.java
++++ b/src/main/java/me/hexedhero/pp/utils/ColorHelper.java
+@@ -6,6 +6,9 @@ import java.util.Arrays;
+ import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
++
++import net.kyori.adventure.text.Component; // Luma - Folia support
++import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer; // Luma - Folia support
+ import net.md_5.bungee.api.ChatColor;
+ 
+ public class ColorHelper {
+@@ -25,7 +28,7 @@ public class ColorHelper {
+       for (Pattern var2 : HEX_PATTERNS) {
+          for (Matcher var3 = var2.matcher(var0); var3.find(); var3 = var2.matcher(var0)) {
+             ChatColor var4 = getHexColorOrClosestLegacyColor(cleanHex(var3.group()));
+-            Object var5 = var0.substring(0, var3.start());
++            String var5 = var0.substring(0, var3.start()); // Luma - VineFlower decompilation
+             String var6 = var0.substring(var3.end());
+             var0 = var5 + var4 + var6;
+          }
+@@ -34,6 +37,12 @@ public class ColorHelper {
+       return ChatColor.translateAlternateColorCodes('&', var0);
+    }
+ 
++   // Luma start - Folia support: Add method to convert colorized string to Component
++   public static Component colorizeToComponent(String text) {
++      return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
++   }
++   // Luma end - Folia support
++
+    public static List<String> colorize(List<String> var0) {
+       ArrayList var1 = new ArrayList();
+ 

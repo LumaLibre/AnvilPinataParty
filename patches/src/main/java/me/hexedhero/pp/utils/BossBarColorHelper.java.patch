@@ -1,0 +1,56 @@
+diff --git a/src/main/java/me/hexedhero/pp/utils/BossBarColorHelper.java b/src/main/java/me/hexedhero/pp/utils/BossBarColorHelper.java
+index 740a4f7..73b3eea 100644
+--- a/src/main/java/me/hexedhero/pp/utils/BossBarColorHelper.java
++++ b/src/main/java/me/hexedhero/pp/utils/BossBarColorHelper.java
+@@ -1,5 +1,7 @@
+ package me.hexedhero.pp.utils;
+ 
++import net.kyori.adventure.bossbar.BossBar;
++
+ import java.awt.Color;
+ import java.util.ArrayList;
+ 
+@@ -8,7 +10,7 @@ public class BossBarColorHelper {
+    }
+ 
+    private static ArrayList<BossBarColorHelper.ColorName> initColorList() {
+-      ArrayList var0 = new ArrayList();
++      ArrayList<BossBarColorHelper.ColorName> var0 = new ArrayList<>(); // Luma - VineFlower decompilation
+       var0.add(new BossBarColorHelper.ColorName("BLUE", 0, 183, 236));
+       var0.add(new BossBarColorHelper.ColorName("GREEN", 29, 236, 0));
+       var0.add(new BossBarColorHelper.ColorName("PINK", 236, 0, 184));
+@@ -20,7 +22,7 @@ public class BossBarColorHelper {
+    }
+ 
+    public static String getColorNameFromRgb(int var0, int var1, int var2) {
+-      ArrayList var3 = initColorList();
++      ArrayList<BossBarColorHelper.ColorName> var3 = initColorList(); // Luma - VineFlower decompilation
+       BossBarColorHelper.ColorName var4 = null;
+       int var5 = Integer.MAX_VALUE;
+ 
+@@ -50,6 +52,25 @@ public class BossBarColorHelper {
+       return getColorNameFromRgb(var0.getRed(), var0.getGreen(), var0.getBlue());
+    }
+ 
++   // Luma start - Folia support
++   public static BossBar.Overlay bossBarOverlayFromLegacy(String legacy) {
++      if (legacy == null) {
++         return BossBar.Overlay.PROGRESS;
++      }
++      try {
++         return BossBar.Overlay.valueOf(legacy.toUpperCase());
++      } catch (IllegalArgumentException ignored) {
++         return switch (legacy) {
++            case "SEGMENTED_6" -> BossBar.Overlay.NOTCHED_6;
++            case "SEGMENTED_10" -> BossBar.Overlay.NOTCHED_10;
++            case "SEGMENTED_12" -> BossBar.Overlay.NOTCHED_12;
++            case "SEGMENTED_20" -> BossBar.Overlay.NOTCHED_20;
++            default -> BossBar.Overlay.PROGRESS;
++         };
++      }
++   }
++   // Luma end - Folia support
++
+    public static class ColorName {
+       public int r;
+       public int g;

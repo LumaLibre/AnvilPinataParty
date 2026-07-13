@@ -1,0 +1,186 @@
+diff --git a/src/main/java/me/hexedhero/pp/PinataParty.java b/src/main/java/me/hexedhero/pp/PinataParty.java
+index 82925f0..b60f945 100644
+--- a/src/main/java/me/hexedhero/pp/PinataParty.java
++++ b/src/main/java/me/hexedhero/pp/PinataParty.java
+@@ -21,7 +21,12 @@ import me.hexedhero.pp.objects.CumulativeReader;
+ import me.hexedhero.pp.objects.PluginParticle;
+ import me.hexedhero.pp.objects.PluginSound;
+ import me.hexedhero.pp.objects.YMLFile;
+-import me.hexedhero.pp.shaded.bstats.bukkit.Metrics;
++//import me.hexedhero.pp.shaded.bstats.bukkit.Metrics; // Luma - VineFlower decompilation
++import me.hexedhero.pp.utils.ScheduleHelper;
++import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
++import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
++import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
++import org.bstats.bukkit.Metrics; // Luma - VineFlower decompilation
+ import me.hexedhero.pp.tasks.SaveDataTask;
+ import me.hexedhero.pp.tasks.UpdateCheckerTask;
+ import me.hexedhero.pp.tasks.VoteReminderTask;
+@@ -33,7 +38,8 @@ import me.hexedhero.pp.utils.placeholders.BuiltInParser;
+ import me.hexedhero.pp.utils.placeholders.IPlaceholderParser;
+ import me.hexedhero.pp.utils.placeholders.PlaceholderAPIParser;
+ import net.milkbowl.vault.economy.Economy;
+-import org.apache.commons.lang.math.RandomUtils;
++//import org.apache.commons.lang.math.RandomUtils; // Luma - VineFlower decompilation
++import org.apache.commons.lang3.RandomUtils; // Luma - VineFlower decompilation
+ import org.bukkit.Bukkit;
+ import org.bukkit.Location;
+ import org.bukkit.OfflinePlayer;
+@@ -52,6 +58,7 @@ public class PinataParty extends JavaPlugin {
+    private int votes;
+    private long money;
+    private Economy economy;
++   private ScoreboardLibrary scoreboardLibrary; // Luma - Folia support
+ 
+    public static PinataParty getInstance() {
+       return instance;
+@@ -101,12 +108,21 @@ public class PinataParty extends JavaPlugin {
+       return this.economy;
+    }
+ 
++   // Luma start - Folia support
++   public ScoreboardLibrary getScoreboardLibrary() {
++      return scoreboardLibrary;
++   }
++   // Luma end - Folia support
++
+    public PinataParty() {
+       instance = this;
+    }
+ 
+    public void onEnable() {
+-      loadConfig0();
++      // Luma start - VineFlower decompilation
++      //loadConfig0();
++      reloadConfig();
++      // Luma end - VineFlower decompilation
+       long var1 = System.nanoTime();
+       Common.tellConsole(true, "Loading data...");
+       this.saveDefaultConfig();
+@@ -155,6 +171,15 @@ public class PinataParty extends JavaPlugin {
+          Common.tellConsole(true, "&cVault not found! Not enabling the PinataPool! Download and install it from https://www.spigotmc.org/resources/34315/");
+       }
+ 
++      // Luma start - Folia support: Initialize ScoreboardLibrary
++      try {
++         scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
++      } catch (NoPacketAdapterAvailableException e) {
++         scoreboardLibrary = new NoopScoreboardLibrary();
++         Common.tellConsole(true, "&cNo compatible packet adapter found for ScoreboardLibrary! Glow color features will be disabled.");
++      }
++      // Luma end - Folia support
++
+       if (Bukkit.getPluginManager().getPlugin("CrackShot") != null) {
+          Bukkit.getPluginManager().registerEvents(new CrackShotListener(), getInstance());
+          Common.tellConsole(true, "&aHooked onto CrackShot");
+@@ -183,15 +208,15 @@ public class PinataParty extends JavaPlugin {
+       Common.tellConsole(true, "Starting tasks...");
+       if (this.getConfig().getBoolean("save-task")) {
+          int var7 = this.getConfig().getInt("save-timer") * 20;
+-         Bukkit.getScheduler().runTaskTimerAsynchronously(getInstance(), new SaveDataTask(), var7, var7);
++         ScheduleHelper.runTaskTimerAsync(new SaveDataTask(), var7, var7); // Luma - Folia support
+       }
+ 
+       if (this.getConfig().getBoolean("vote-reminder")) {
+          int var10 = this.getConfig().getInt("vote-reminder-timer") * 20;
+-         Bukkit.getScheduler().runTaskTimerAsynchronously(getInstance(), new VoteReminderTask(), var10, var10);
++         ScheduleHelper.runTaskTimerAsync(new VoteReminderTask(), var10, var10); // Luma - Folia support
+       }
+ 
+-      Bukkit.getScheduler().runTaskTimerAsynchronously(getInstance(), new UpdateCheckerTask(), 0L, 1728000L);
++      ScheduleHelper.runTaskTimerAsync(new UpdateCheckerTask(), 0L, 1728000L); // Luma - Folia support
+       Common.tellConsole(true, "Starting metrics...");
+       new Metrics(getInstance(), 5800);
+       Common.tellConsole(
+@@ -215,6 +240,7 @@ public class PinataParty extends JavaPlugin {
+       GlowHelper.unregisterTeams();
+       Common.tellConsole(true, "Saving data...");
+       this.saveData();
++      scoreboardLibrary.close(); // Luma - Folia support
+       Common.tellConsole(
+          true,
+          "&aDone and disabled in %time%ms".replace("%time%", Common.nanosToMillis(System.nanoTime() - var1)),
+@@ -331,7 +357,7 @@ public class PinataParty extends JavaPlugin {
+          }
+ 
+          this.removeQueue(var1);
+-         Bukkit.getScheduler().runTaskAsynchronously(getInstance(), () -> this.saveData());
++         ScheduleHelper.runTaskAsync(() -> this.saveData()); // Luma - Folia support
+          new PluginSound("vote-effects.sound").send(var1, true);
+          new PluginParticle("vote-effects.particle").send(var1.getLocation().add(0.0, 1.0, 0.0));
+       }
+@@ -341,22 +367,22 @@ public class PinataParty extends JavaPlugin {
+       for (int var3 = 0; var3 < var2; var3++) {
+          Player var4 = Bukkit.getPlayerExact(var1);
+          if (var4 == null) {
+-            Bukkit.getScheduler().runTaskAsynchronously(getInstance(), () -> {
++            // Luma start - Folia support
++            ScheduleHelper.runTaskAsync(() -> {
+                OfflinePlayer var2x = Bukkit.getOfflinePlayer(var1);
+-               Bukkit.getScheduler().runTask(getInstance(), () -> {
+-                  if (getInstance().getConfig().getBoolean("offline-voting.enabled")) {
+-                     if (getInstance().getConfig().getBoolean("offline-voting.increase-pinata-vote")) {
+-                        getInstance().addVotes(1);
+-                        this.checkForAutoSummon();
+-                     }
+-
+-                     if (getInstance().getConfig().getBoolean("offline-voting.queue-commands")) {
+-                        getInstance().addQueue(var2x);
+-                        Common.tellConsole(true, "%player% is offline, adding vote to queue.".replace("%player%", var1));
+-                     }
++               if (getInstance().getConfig().getBoolean("offline-voting.enabled")) {
++                  if (getInstance().getConfig().getBoolean("offline-voting.increase-pinata-vote")) {
++                     getInstance().addVotes(1);
++                     this.checkForAutoSummon();
+                   }
+-               });
++
++                  if (getInstance().getConfig().getBoolean("offline-voting.queue-commands")) {
++                     getInstance().addQueue(var2x);
++                     Common.tellConsole(true, "%player% is offline, adding vote to queue.".replace("%player%", var1));
++                  }
++               }
+             });
++            // Luma end - Folia support
+          } else {
+             getInstance().addVotes(1);
+             this.checkForAutoSummon();
+@@ -364,8 +390,12 @@ public class PinataParty extends JavaPlugin {
+             new CommandReader("player-vote").dispatchCommands(var4, false, null);
+             new CumulativeReader(var4).check();
+             if (!Common.isPlayerVanished(var4)) {
+-               new PluginSound("vote-effects.sound").send(var4, true);
+-               new PluginParticle("vote-effects.particle").send(var4.getLocation().add(0.0, 1.0, 0.0));
++               // Luma start - Folia support
++               ScheduleHelper.runTask(var4, () -> {
++                  new PluginSound("vote-effects.sound").send(var4, true);
++                  new PluginParticle("vote-effects.particle").send(var4.getLocation().add(0.0, 1.0, 0.0));
++               });
++               // Luma end - Folia support
+             }
+          }
+       }
+@@ -376,8 +406,8 @@ public class PinataParty extends JavaPlugin {
+       if (getInstance().getVotes() >= var1 && var1 != 0) {
+          getInstance().resetVotes();
+          new CommandReader("votes-reached").dispatchCommands();
+-         if (!"1107891".equals("12345") && !"1107891".isEmpty() && !"-1379555705".equals("12345") && !"-1379555705".isEmpty()
+-            || !(RandomUtils.nextDouble() < 0.5)) {
++         // Luma - VineFlower decompilation: I don't know what the hell the original code for this statement was
++         if (!"1107891".equals("12345") && !"1107891".isEmpty() && !"-1379555705".equals("12345") && !"-1379555705".isEmpty() || !(RandomUtils.nextDouble() < 0.5)) {
+             int var2 = getInstance().getConfig().getInt("auto-summon.amount");
+             if (var2 > 0) {
+                Location var3 = getInstance().getLocationFromConfig(this.getRandomSpawnLocation());
+@@ -391,7 +421,11 @@ public class PinataParty extends JavaPlugin {
+                }
+ 
+                for (int var4 = 1; var4 <= var2; var4++) {
+-                  new Pinata(var3);
++                  // Luma start - Folia support
++                  ScheduleHelper.runTask(var3, () -> {
++                     new Pinata(var3);
++                  });
++                  // Luma end - Folia support
+                }
+             }
+          }

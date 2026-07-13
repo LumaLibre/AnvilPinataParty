@@ -1,0 +1,121 @@
+diff --git a/src/main/java/me/hexedhero/pp/utils/GlowHelper.java b/src/main/java/me/hexedhero/pp/utils/GlowHelper.java
+index 69356d2..eb2ca7f 100644
+--- a/src/main/java/me/hexedhero/pp/utils/GlowHelper.java
++++ b/src/main/java/me/hexedhero/pp/utils/GlowHelper.java
+@@ -1,69 +1,84 @@
+ package me.hexedhero.pp.utils;
+ 
+-import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.LinkedList;
+ import java.util.Map;
+ import java.util.Random;
+-import java.util.Map.Entry;
+-import org.bukkit.Bukkit;
+-import org.bukkit.ChatColor;
++
++import me.hexedhero.pp.PinataParty;
++import net.kyori.adventure.text.format.NamedTextColor;
++import net.megavex.scoreboardlibrary.api.team.ScoreboardTeam;
++import net.megavex.scoreboardlibrary.api.team.TeamDisplay;
++import net.megavex.scoreboardlibrary.api.team.TeamManager;
+ import org.bukkit.entity.Entity;
+-import org.bukkit.scoreboard.Scoreboard;
+-import org.bukkit.scoreboard.Team;
++import org.bukkit.entity.Player;
+ 
+ public class GlowHelper {
+    private static final Random RANDOM = new Random();
+    private static final String SCOREBOARD_TEAM_NAME = "pp_glow_%entity_id%";
+-   private static final Scoreboard SCOREBOARD = Bukkit.getScoreboardManager().getMainScoreboard();
+-   private static Map<Integer, Team> teams = new HashMap<>();
++   //private static final Scoreboard SCOREBOARD = Bukkit.getScoreboardManager().getMainScoreboard(); // Luma - Folia support
++   private static final TeamManager TEAM_MANAGER = PinataParty.getInstance().getScoreboardLibrary().createTeamManager(); // Luma - Folia support
++   private static Map<Integer, ScoreboardTeam> teams = new HashMap<>(); // Luma - Folia support // Luma - Fix pinata glow colors
++   private static final NamedTextColor[] COLORS = NamedTextColor.NAMES.values().toArray(new NamedTextColor[0]); // Luma - Minor cleanup
++
++
+ 
+    private GlowHelper() {
+    }
+ 
++   // Luma start - Don't unregister teams
+    public static void unregisterTeams() {
+-      for (Entry var1 : teams.entrySet()) {
+-         try {
+-            ((Team)var1.getValue()).unregister();
+-         } catch (Exception var3) {
+-         }
+-      }
+-
+       teams.clear();
++      TEAM_MANAGER.close(); // Luma - Fix pinata glow colors
+    }
++   // Luma end - Don't unregister teams
+ 
+-   public static void unregisterTeam(Entity var0) {
+-      Team var1 = SCOREBOARD.getTeam("pp_glow_%entity_id%".replace("%entity_id%", Integer.toString(var0.getEntityId())));
++   public static void unregisterTeam(Entity entity) {
++      // Luma start - Folia support
++      ScoreboardTeam var1 = teams.get(entity.getEntityId());
+       if (var1 != null) {
+-         var1.unregister();
++         TEAM_MANAGER.removeTeam(var1);
+       }
++      // Luma end - Folia support
+ 
+-      teams.remove(var0.getEntityId());
++      teams.remove(entity.getEntityId());
+    }
+ 
+-   public static void setGlowing(Entity var0, ChatColor var1) {
+-      String var2 = "pp_glow_%entity_id%".replace("%entity_id%", Integer.toString(var0.getEntityId()));
+-      if (SCOREBOARD.getTeam(var2) == null) {
+-         teams.put(var0.getEntityId(), SCOREBOARD.registerNewTeam(var2));
++   // Luma start - Folia support
++   public static void setGlowing(Entity var0, NamedTextColor var1) {
++      int id = var0.getEntityId();
++      if (teams.get(id) == null) {
++         teams.put(var0.getEntityId(), TEAM_MANAGER.createIfAbsent(SCOREBOARD_TEAM_NAME.replace("%entity_id%", String.valueOf(var0.getEntityId()))));
+       }
+ 
+-      Team var3 = teams.get(var0.getEntityId());
++      ScoreboardTeam scoreboardTeam = teams.get(var0.getEntityId());
+       if (!var0.isGlowing()) {
+          var0.setGlowing(true);
+       }
+ 
+-      if (!var3.getEntries().contains(var0.getUniqueId().toString())) {
+-         var3.addEntry(var0.getUniqueId().toString());
++      TeamDisplay teamDisplay = scoreboardTeam.defaultDisplay();
++
++
++      if (!teamDisplay.entries().contains(var0.getUniqueId().toString())) {
++         teamDisplay.addEntry(var0.getUniqueId().toString());
+       }
+ 
+       if (var1 != null) {
+-         var3.setColor(var1);
++         teamDisplay.playerColor(var1);
+       } else {
+-         LinkedList var4 = new LinkedList<>(Arrays.asList(ChatColor.values()));
+-         var4.removeAll(
+-            Arrays.asList(var3.getColor(), ChatColor.BOLD, ChatColor.ITALIC, ChatColor.MAGIC, ChatColor.RESET, ChatColor.STRIKETHROUGH, ChatColor.UNDERLINE)
+-         );
+-         var3.setColor((ChatColor)var4.get(RANDOM.nextInt(var4.size())));
++         teamDisplay.playerColor(COLORS[RANDOM.nextInt(COLORS.length)]); // Luma - Minor cleanup
+       }
+    }
++   // Luma end - Folia support
++
++
++   // Luma start - Fix pinata glow colors
++   public static void showToPlayer(Player player) {
++      TEAM_MANAGER.addPlayer(player);
++   }
++
++   public  static void unShowToPlayer(Player player) {
++      TEAM_MANAGER.removePlayer(player);
++   }
++   // Luma end - Fix pinata glow colors
+ }

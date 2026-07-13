@@ -1,0 +1,13 @@
+diff --git a/src/main/java/me/hexedhero/pp/listeners/PinataListener.java b/src/main/java/me/hexedhero/pp/listeners/PinataListener.java
+index 2e691db..d8ee03c 100644
+--- a/src/main/java/me/hexedhero/pp/listeners/PinataListener.java
++++ b/src/main/java/me/hexedhero/pp/listeners/PinataListener.java
+@@ -101,7 +101,7 @@ public class PinataListener implements Listener {
+                var5.remove();
+             }
+          } else {
+-            ArrayList var6 = new ArrayList();
++            ArrayList<Pinata> var6 = new ArrayList<>(); // Luma - VineFlower decompilation
+ 
+             for (Pinata var8 : PinataParty.getInstance().getPinatas()) {
+                if (var8.getEntity() != null && var8.getEntity().equals(var5)) {

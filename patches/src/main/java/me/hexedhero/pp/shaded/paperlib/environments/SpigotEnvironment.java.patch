@@ -1,0 +1,19 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/SpigotEnvironment.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/SpigotEnvironment.java
+deleted file mode 100644
+index 280bcd4..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/SpigotEnvironment.java
++++ /dev/null
+@@ -1,13 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.environments;
+-
+-public class SpigotEnvironment extends CraftBukkitEnvironment {
+-   @Override
+-   public String getName() {
+-      return "Spigot";
+-   }
+-
+-   @Override
+-   public boolean isSpigot() {
+-      return true;
+-   }
+-}

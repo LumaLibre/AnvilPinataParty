@@ -1,0 +1,14 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/CraftBukkitEnvironment.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/CraftBukkitEnvironment.java
+deleted file mode 100644
+index 93d274d..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/environments/CraftBukkitEnvironment.java
++++ /dev/null
+@@ -1,8 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.environments;
+-
+-public class CraftBukkitEnvironment extends Environment {
+-   @Override
+-   public String getName() {
+-      return "CraftBukkit";
+-   }
+-}

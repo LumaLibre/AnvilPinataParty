@@ -1,0 +1,16 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/inventoryholdersnapshot/InventoryHolderSnapshotOptionalSnapshots.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/inventoryholdersnapshot/InventoryHolderSnapshotOptionalSnapshots.java
+deleted file mode 100644
+index d249e93..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/inventoryholdersnapshot/InventoryHolderSnapshotOptionalSnapshots.java
++++ /dev/null
+@@ -1,10 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.inventoryholdersnapshot;
+-
+-import org.bukkit.inventory.Inventory;
+-
+-public class InventoryHolderSnapshotOptionalSnapshots implements InventoryHolderSnapshot {
+-   @Override
+-   public InventoryHolderSnapshotResult getHolder(Inventory var1, boolean var2) {
+-      return new InventoryHolderSnapshotResult(var2, var1.getHolder(var2));
+-   }
+-}

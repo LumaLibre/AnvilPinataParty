@@ -1,0 +1,27 @@
+diff --git a/src/main/java/me/hexedhero/pp/objects/CumulativeReader.java b/src/main/java/me/hexedhero/pp/objects/CumulativeReader.java
+index 245628a..7f12163 100644
+--- a/src/main/java/me/hexedhero/pp/objects/CumulativeReader.java
++++ b/src/main/java/me/hexedhero/pp/objects/CumulativeReader.java
+@@ -6,6 +6,7 @@ import java.util.List;
+ import java.util.Set;
+ import me.hexedhero.pp.PinataParty;
+ import me.hexedhero.pp.enums.ECumulativeType;
++import me.hexedhero.pp.utils.ScheduleHelper;
+ import org.bukkit.Bukkit;
+ import org.bukkit.configuration.ConfigurationSection;
+ import org.bukkit.entity.Player;
+@@ -63,8 +64,12 @@ public class CumulativeReader {
+ 
+       public void dispatchCommands(Player var1) {
+          if (var1 == null || this.permission.isEmpty() || var1.hasPermission(this.permission)) {
+-            this.commands
+-               .forEach(var1x -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PinataParty.getInstance().getPlaceholderParser().parse(var1, var1x)));
++            // Luma start - Folia support
++            ScheduleHelper.runTaskGlobal(() -> {
++               this.commands
++                       .forEach(var1x -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PinataParty.getInstance().getPlaceholderParser().parse(var1, var1x)));
++            });
++            // Luma end - Folia support
+          }
+       }
+    }

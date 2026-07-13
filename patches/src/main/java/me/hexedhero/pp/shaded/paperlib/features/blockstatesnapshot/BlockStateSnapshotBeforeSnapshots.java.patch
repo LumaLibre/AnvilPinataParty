@@ -1,0 +1,16 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/blockstatesnapshot/BlockStateSnapshotBeforeSnapshots.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/blockstatesnapshot/BlockStateSnapshotBeforeSnapshots.java
+deleted file mode 100644
+index 585e21a..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/blockstatesnapshot/BlockStateSnapshotBeforeSnapshots.java
++++ /dev/null
+@@ -1,10 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.blockstatesnapshot;
+-
+-import org.bukkit.block.Block;
+-
+-public class BlockStateSnapshotBeforeSnapshots implements BlockStateSnapshot {
+-   @Override
+-   public BlockStateSnapshotResult getBlockState(Block var1, boolean var2) {
+-      return new BlockStateSnapshotResult(false, var1.getState());
+-   }
+-}

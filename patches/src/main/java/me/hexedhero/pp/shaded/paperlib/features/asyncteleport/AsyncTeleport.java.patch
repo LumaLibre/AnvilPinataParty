@@ -1,0 +1,16 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncteleport/AsyncTeleport.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncteleport/AsyncTeleport.java
+deleted file mode 100644
+index 5e79ca4..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncteleport/AsyncTeleport.java
++++ /dev/null
+@@ -1,10 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.asyncteleport;
+-
+-import java.util.concurrent.CompletableFuture;
+-import org.bukkit.Location;
+-import org.bukkit.entity.Entity;
+-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+-
+-public interface AsyncTeleport {
+-   CompletableFuture<Boolean> teleportAsync(Entity var1, Location var2, TeleportCause var3);
+-}

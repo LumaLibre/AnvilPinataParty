@@ -1,0 +1,27 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/blockstatesnapshot/BlockStateSnapshotResult.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/blockstatesnapshot/BlockStateSnapshotResult.java
+deleted file mode 100644
+index cff97d4..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/blockstatesnapshot/BlockStateSnapshotResult.java
++++ /dev/null
+@@ -1,21 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.blockstatesnapshot;
+-
+-import org.bukkit.block.BlockState;
+-
+-public class BlockStateSnapshotResult {
+-   private final boolean isSnapshot;
+-   private final BlockState state;
+-
+-   public BlockStateSnapshotResult(boolean var1, BlockState var2) {
+-      this.isSnapshot = var1;
+-      this.state = var2;
+-   }
+-
+-   public boolean isSnapshot() {
+-      return this.isSnapshot;
+-   }
+-
+-   public BlockState getState() {
+-      return this.state;
+-   }
+-}

@@ -1,0 +1,62 @@
+diff --git a/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java b/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java
+index a667fa8..1fdfbdc 100644
+--- a/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java
++++ b/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java
+@@ -4,8 +4,10 @@ import me.hexedhero.pp.PinataParty;
+ import me.hexedhero.pp.entities.Pinata;
+ import me.hexedhero.pp.enums.EBarType;
+ import me.hexedhero.pp.utils.Common;
++import me.hexedhero.pp.utils.GlowHelper;
+ import me.hexedhero.pp.utils.HitHelper;
+-import org.apache.commons.lang.math.RandomUtils;
++//import org.apache.commons.lang.math.RandomUtils; // Luma - VineFlower decompilation
++import org.apache.commons.lang3.RandomUtils;
+ import org.bukkit.Sound;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Firework;
+@@ -24,13 +26,14 @@ public class PlayerListener implements Listener {
+    public void a(PlayerJoinEvent var1) {
+       Player var2 = var1.getPlayer();
+       if (!var2.hasMetadata("NPC")) {
++         GlowHelper.showToPlayer(var2); // Luma - Fix pinata glow colors
+          for (Pinata var4 : PinataParty.getInstance().getPinatas()) {
+             if (var4.getHealthBossBar() != null && Common.shouldSeeBossBar(var4, var2, EBarType.HEALTH)) {
+-               var4.getHealthBossBar().addPlayer(var2);
++               var4.getHealthBossBar().addViewer(var2);
+             }
+ 
+             if (var4.getCountdownBossBar() != null && Common.shouldSeeBossBar(var4, var2, EBarType.COUNTDOWN)) {
+-               var4.getCountdownBossBar().addPlayer(var2);
++               var4.getCountdownBossBar().addViewer(var2);
+             }
+          }
+       }
+@@ -61,6 +64,7 @@ public class PlayerListener implements Listener {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void c(PlayerQuitEvent var1) {
+       HitHelper.getHitAmount().remove(var1.getPlayer().getUniqueId());
++      GlowHelper.unShowToPlayer(var1.getPlayer()); // Luma - Fix pinata glow colors
+    }
+ 
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+@@ -77,16 +81,16 @@ public class PlayerListener implements Listener {
+       if (!var2.hasMetadata("NPC")) {
+          for (Pinata var4 : PinataParty.getInstance().getPinatas()) {
+             if (var4.getHealthBossBar() != null) {
+-               var4.getHealthBossBar().removePlayer(var2);
++               var4.getHealthBossBar().removeViewer(var2);
+                if (Common.shouldSeeBossBar(var4, var2, EBarType.HEALTH)) {
+-                  var4.getHealthBossBar().addPlayer(var2);
++                  var4.getHealthBossBar().addViewer(var2);
+                }
+             }
+ 
+             if (var4.getCountdownBossBar() != null) {
+-               var4.getCountdownBossBar().removePlayer(var2);
++               var4.getCountdownBossBar().removeViewer(var2);
+                if (Common.shouldSeeBossBar(var4, var2, EBarType.COUNTDOWN)) {
+-                  var4.getCountdownBossBar().addPlayer(var2);
++                  var4.getCountdownBossBar().addViewer(var2);
+                }
+             }
+          }

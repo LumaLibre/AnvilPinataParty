@@ -1,1 +1,1 @@
-rootProject.name = "Anvil" // TODO: Configure
+rootProject.name = "AnvilPinataParty"

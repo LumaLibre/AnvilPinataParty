@@ -1,0 +1,28 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncchunks/AsyncChunksPaper_9_12.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncchunks/AsyncChunksPaper_9_12.java
+deleted file mode 100644
+index c4285b4..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/asyncchunks/AsyncChunksPaper_9_12.java
++++ /dev/null
+@@ -1,22 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.asyncchunks;
+-
+-import java.util.concurrent.CompletableFuture;
+-import me.hexedhero.pp.shaded.paperlib.PaperLib;
+-import org.bukkit.Chunk;
+-import org.bukkit.World;
+-import org.bukkit.World.ChunkLoadCallback;
+-
+-public class AsyncChunksPaper_9_12 implements AsyncChunks {
+-   @Override
+-   public CompletableFuture<Chunk> getChunkAtAsync(World var1, int var2, int var3, boolean var4, boolean var5) {
+-      CompletableFuture var6 = new CompletableFuture();
+-      if (!var4 && PaperLib.getMinecraftVersion() >= 12 && !var1.isChunkGenerated(var2, var3)) {
+-         var6.complete(null);
+-      } else {
+-         ChunkLoadCallback var7 = var6::complete;
+-         var1.getChunkAtAsync(var2, var3, var7);
+-      }
+-
+-      return var6;
+-   }
+-}

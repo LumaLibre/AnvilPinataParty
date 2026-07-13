@@ -1,0 +1,72 @@
+diff --git a/src/main/java/me/hexedhero/pp/objects/PluginComponentMessage.java b/src/main/java/me/hexedhero/pp/objects/PluginComponentMessage.java
+new file mode 100644
+index 0000000..396889e
+--- /dev/null
++++ b/src/main/java/me/hexedhero/pp/objects/PluginComponentMessage.java
+@@ -0,0 +1,66 @@
++// Luma - Folia support
++package me.hexedhero.pp.objects;
++
++import me.hexedhero.pp.PinataParty;
++import me.hexedhero.pp.utils.ColorHelper;
++import net.kyori.adventure.text.Component;
++import org.bukkit.command.CommandSender;
++import org.bukkit.entity.Player;
++import org.jetbrains.annotations.Nullable;
++
++import java.util.ArrayList;
++import java.util.Collection;
++import java.util.List;
++
++public class PluginComponentMessage extends PluginMessage {
++
++    private boolean doColor;
++
++    public PluginComponentMessage(String var1) {
++        super(var1);
++    }
++
++    @Override
++    public PluginComponentMessage applyColor() {
++        this.doColor = true;
++        return this;
++    }
++
++    @Override
++    public PluginComponentMessage applyPlaceholders(String... var1) {
++        super.applyPlaceholders(var1);
++        return this;
++    }
++
++    @Override
++    public void send(CommandSender sender) {
++        List<Component> components = apply(doColor, sender instanceof Player ? (Player) sender : null);
++
++        for (Component component : components) {
++            if (!component.children().isEmpty()) {
++                sender.sendMessage(component);
++            }
++        }
++    }
++
++    @Override
++    public void send(Collection<? extends CommandSender> senders) {
++        if (!this.messages.isEmpty()) {
++            senders.forEach(this::send);
++        }
++    }
++
++    public Component getFirstComponent() {
++        return apply(doColor, null).getFirst();
++    }
++
++    private List<Component> apply(boolean color, @Nullable Player player) {
++        List<Component> components = new ArrayList<>();
++        for (String message : this.messages) {
++            String finalMessage = player != null ? PinataParty.getInstance().getPlaceholderParser().parse(player, message) : message;
++            Component processedMessage = color ? ColorHelper.colorizeToComponent(finalMessage) : Component.text(finalMessage);
++            components.add(processedMessage);
++        }
++        return components;
++    }
++}

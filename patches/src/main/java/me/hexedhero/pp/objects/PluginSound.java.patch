@@ -1,0 +1,48 @@
+diff --git a/src/main/java/me/hexedhero/pp/objects/PluginSound.java b/src/main/java/me/hexedhero/pp/objects/PluginSound.java
+index 6628efe..97c1371 100644
+--- a/src/main/java/me/hexedhero/pp/objects/PluginSound.java
++++ b/src/main/java/me/hexedhero/pp/objects/PluginSound.java
+@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
+ import java.lang.reflect.Method;
+ import me.hexedhero.pp.PinataParty;
+ import me.hexedhero.pp.utils.Common;
++import me.hexedhero.pp.utils.ScheduleHelper;
+ import org.bukkit.Location;
+ import org.bukkit.Sound;
+ import org.bukkit.entity.Entity;
+@@ -37,20 +38,32 @@ public class PluginSound {
+ 
+    public void send(Entity var1) {
+       if (this.sound != null) {
+-         var1.getWorld().playSound(var1.getLocation(), this.sound, this.volume, this.pitch);
++         // Luma start - Folia support
++         ScheduleHelper.runTask(var1.getLocation(), () -> {
++            var1.getWorld().playSound(var1.getLocation(), this.sound, this.volume, this.pitch);
++         });
++         // Luma end - Folia support
+       }
+    }
+ 
+    public void send(Location var1) {
+       if (this.sound != null) {
+-         var1.getWorld().playSound(var1, this.sound, this.volume, this.pitch);
++         // Luma start - Folia support
++         ScheduleHelper.runTask(var1, () -> {
++            var1.getWorld().playSound(var1, this.sound, this.volume, this.pitch);
++         });
++         // Luma end - Folia support
+       }
+    }
+ 
+    public void send(Player var1, boolean var2) {
+       if (this.sound != null) {
+          if (var2) {
+-            var1.getWorld().playSound(var1.getLocation(), this.sound, this.volume, this.pitch);
++            // Luma start - Folia support
++            ScheduleHelper.runTask(var1.getLocation(), () -> {
++               var1.getWorld().playSound(var1.getLocation(), this.sound, this.volume, this.pitch);
++            });
++            // Luma end - Folia support
+          } else {
+             var1.playSound(var1.getLocation(), this.sound, this.volume, this.pitch);
+          }

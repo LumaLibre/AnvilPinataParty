@@ -1,0 +1,55 @@
+diff --git a/src/main/java/me/hexedhero/pp/utils/ScheduleHelper.java b/src/main/java/me/hexedhero/pp/utils/ScheduleHelper.java
+new file mode 100644
+index 0000000..4f8ce0e
+--- /dev/null
++++ b/src/main/java/me/hexedhero/pp/utils/ScheduleHelper.java
+@@ -0,0 +1,49 @@
++// Luma - Folia support
++package me.hexedhero.pp.utils;
++
++import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
++import me.hexedhero.pp.PinataParty;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.entity.Entity;
++
++import java.util.concurrent.TimeUnit;
++import java.util.function.Consumer;
++
++public class ScheduleHelper {
++
++    private ScheduleHelper() {
++    }
++
++    public static void runTaskGlobal(Runnable task) {
++        Bukkit.getGlobalRegionScheduler().run(PinataParty.getInstance(), (t) -> task.run());
++    }
++
++    public static void runTask(Entity entity, Runnable task) {
++        entity.getScheduler().run(PinataParty.getInstance(), t -> task.run(), null);
++    }
++
++    public static void runTask(Location location, Runnable task) {
++        Bukkit.getRegionScheduler().execute(PinataParty.getInstance(), location, task);
++    }
++
++    public static void runTaskTimer(Entity entity, Consumer<ScheduledTask> task, long delay, long period) {
++        entity.getScheduler().runAtFixedRate(PinataParty.getInstance(), task, null, Math.max(delay, 1), period);
++    }
++
++    public static ScheduledTask runTaskTimer(Location location, Consumer<ScheduledTask> task, long delay, long period) {
++        return Bukkit.getRegionScheduler().runAtFixedRate(PinataParty.getInstance(), location, task, Math.max(delay, 1), period);
++    }
++
++    public static void runTaskLater(Entity entity, Runnable task, long delay) {
++        entity.getScheduler().runDelayed(PinataParty.getInstance(), t -> task.run(), null, Math.max(delay, 1));
++    }
++
++    public static void runTaskAsync(Runnable task) {
++        Bukkit.getAsyncScheduler().runNow(PinataParty.getInstance(), t -> task.run());
++    }
++
++    public static void runTaskTimerAsync(Runnable runnable, long delay, long period) {
++        Bukkit.getAsyncScheduler().runAtFixedRate(PinataParty.getInstance(),t -> runnable.run(), Math.max(delay * 50, 1), period * 50, TimeUnit.MILLISECONDS);
++    }
++}

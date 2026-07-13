@@ -1,0 +1,13 @@
+diff --git a/src/main/java/me/hexedhero/pp/objects/PluginMessage.java b/src/main/java/me/hexedhero/pp/objects/PluginMessage.java
+index c3b00c2..6a67432 100644
+--- a/src/main/java/me/hexedhero/pp/objects/PluginMessage.java
++++ b/src/main/java/me/hexedhero/pp/objects/PluginMessage.java
+@@ -12,7 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
+ import org.bukkit.entity.Player;
+ 
+ public class PluginMessage {
+-   private List<String> messages = new ArrayList<>();
++   protected List<String> messages = new ArrayList<>(); // Luma - Folia support: Expose messages field to allow PluginComponentMessage to convert messages to components
+ 
+    public PluginMessage(String var1) {
+       FileConfiguration var2 = PinataParty.getInstance().getConfig();

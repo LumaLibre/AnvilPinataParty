@@ -1,0 +1,23 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/bedspawnlocation/BedSpawnLocationPaper.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/bedspawnlocation/BedSpawnLocationPaper.java
+deleted file mode 100644
+index 31ed2d2..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/bedspawnlocation/BedSpawnLocationPaper.java
++++ /dev/null
+@@ -1,17 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.bedspawnlocation;
+-
+-import java.util.concurrent.CompletableFuture;
+-import me.hexedhero.pp.shaded.paperlib.PaperLib;
+-import org.bukkit.Location;
+-import org.bukkit.entity.Player;
+-
+-public class BedSpawnLocationPaper implements BedSpawnLocation {
+-   @Override
+-   public CompletableFuture<Location> getBedSpawnLocationAsync(Player var1, boolean var2) {
+-      Location var3 = var1.getPotentialBedLocation();
+-      return var3 != null && var3.getWorld() != null
+-         ? PaperLib.getChunkAtAsync(var3.getWorld(), var3.getBlockX() >> 4, var3.getBlockZ() >> 4, false, var2)
+-            .thenCompose(var1x -> CompletableFuture.completedFuture(var1.getBedSpawnLocation()))
+-         : CompletableFuture.completedFuture(null);
+-   }
+-}

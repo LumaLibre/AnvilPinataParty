@@ -1,0 +1,16 @@
+diff --git a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/chunkisgenerated/ChunkIsGeneratedUnknown.java b/src/main/java/me/hexedhero/pp/shaded/paperlib/features/chunkisgenerated/ChunkIsGeneratedUnknown.java
+deleted file mode 100644
+index 63082a3..0000000
+--- a/src/main/java/me/hexedhero/pp/shaded/paperlib/features/chunkisgenerated/ChunkIsGeneratedUnknown.java
++++ /dev/null
+@@ -1,10 +0,0 @@
+-package me.hexedhero.pp.shaded.paperlib.features.chunkisgenerated;
+-
+-import org.bukkit.World;
+-
+-public class ChunkIsGeneratedUnknown implements ChunkIsGenerated {
+-   @Override
+-   public boolean isChunkGenerated(World var1, int var2, int var3) {
+-      return true;
+-   }
+-}
