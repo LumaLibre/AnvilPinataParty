@@ -40,7 +40,7 @@ dependencies {
 tasks {
     shadowJar {
         archiveClassifier.set("")
-        archiveBaseName.set(rootProject.name)
+        archiveBaseName.set("PinataParty")
 
         relocate("org.bstats", "me.hexedhero.pp.shaded.bstats")
         relocate("net.megavex", "me.hexedhero.pp.shaded.scoreboardlibrary")
