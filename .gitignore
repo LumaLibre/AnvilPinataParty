@@ -10,7 +10,7 @@ build/
 *.ipr
 
 # Temporary git directory used for patch generation
-.patch-git/
+#.patch-git/
 
 # Generated/decompiled sources (not tracked - use patches instead)
 sources/generated/
@@ -20,7 +20,7 @@ sources/*.jar
 # Decompiler downloads
 build/decompiler/
 
-!patches/**/*.patch
+#!patches/**/*.patch
 
 # Source code
 api/

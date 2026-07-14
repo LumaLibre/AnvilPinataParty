@@ -1,0 +1,21 @@
+diff --git a/src/main/java/me/hexedhero/pp/listeners/VotifierListener.java b/src/main/java/me/hexedhero/pp/listeners/VotifierListener.java
+index 0f56550..0e60bef 100644
+--- a/src/main/java/me/hexedhero/pp/listeners/VotifierListener.java
++++ b/src/main/java/me/hexedhero/pp/listeners/VotifierListener.java
+@@ -17,13 +17,15 @@ public class VotifierListener implements Listener {
+          String var2 = var1.getVote().getUsername();
+          if (var2 != null && !var2.trim().isEmpty()) {
+             Vote var3 = var1.getVote();
+-            Bukkit.getScheduler().runTask(PinataParty.getInstance(), () -> {
++            // Luma start - Folia support
++            me.hexedhero.pp.utils.ScheduleHelper.runTaskGlobal(() -> {
+                VoteReceivedEvent var2x = new VoteReceivedEvent(var3);
+                Bukkit.getPluginManager().callEvent(var2x);
+                if (!var2x.isCancelled()) {
+                   PinataParty.getInstance().addVote(var2, 1);
+                }
+             });
++            // Luma end - Folia support
+          }
+       }
+    }
