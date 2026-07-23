@@ -1,5 +1,5 @@
 diff --git a/src/main/java/me/hexedhero/pp/PinataParty.java b/src/main/java/me/hexedhero/pp/PinataParty.java
-index 82925f0..b60f945 100644
+index e6ca72f..ab162fc 100644
 --- a/src/main/java/me/hexedhero/pp/PinataParty.java
 +++ b/src/main/java/me/hexedhero/pp/PinataParty.java
 @@ -21,7 +21,12 @@ import me.hexedhero.pp.objects.CumulativeReader;
@@ -160,18 +160,7 @@ index 82925f0..b60f945 100644
              }
           }
        }
-@@ -376,8 +406,8 @@ public class PinataParty extends JavaPlugin {
-       if (getInstance().getVotes() >= var1 && var1 != 0) {
-          getInstance().resetVotes();
-          new CommandReader("votes-reached").dispatchCommands();
--         if (!"1107891".equals("12345") && !"1107891".isEmpty() && !"-1379555705".equals("12345") && !"-1379555705".isEmpty()
--            || !(RandomUtils.nextDouble() < 0.5)) {
-+         // Luma - VineFlower decompilation: I don't know what the hell the original code for this statement was
-+         if (!"1107891".equals("12345") && !"1107891".isEmpty() && !"-1379555705".equals("12345") && !"-1379555705".isEmpty() || !(RandomUtils.nextDouble() < 0.5)) {
-             int var2 = getInstance().getConfig().getInt("auto-summon.amount");
-             if (var2 > 0) {
-                Location var3 = getInstance().getLocationFromConfig(this.getRandomSpawnLocation());
-@@ -391,7 +421,11 @@ public class PinataParty extends JavaPlugin {
+@@ -390,7 +420,11 @@ public class PinataParty extends JavaPlugin {
                 }
  
                 for (int var4 = 1; var4 <= var2; var4++) {

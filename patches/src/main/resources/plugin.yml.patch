@@ -1,8 +1,8 @@
 diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
-index ac337bf..7e033c9 100644
+index ebf4dad..11055a1 100644
 --- a/src/main/resources/plugin.yml
 +++ b/src/main/resources/plugin.yml
-@@ -4,4 +4,5 @@ version: 2.69.6
+@@ -4,4 +4,5 @@ version: 2.69.8
  api-version: 1.13
  main: me.hexedhero.pp.PinataParty
  authors: [Indyuce, HexedHero]

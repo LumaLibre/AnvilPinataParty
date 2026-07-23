@@ -1,5 +1,5 @@
 diff --git a/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java b/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java
-index a667fa8..1fdfbdc 100644
+index 87d5a05..cb947ec 100644
 --- a/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java
 +++ b/src/main/java/me/hexedhero/pp/listeners/PlayerListener.java
 @@ -4,8 +4,10 @@ import me.hexedhero.pp.PinataParty;

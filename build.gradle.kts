@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "me.hexedhero.pp"
-version = "2.96.6-Folia"
+version = "2.96.8-Folia"
 
 repositories {
     mavenCentral()
@@ -61,7 +61,7 @@ java {
 }
 
 val decompileConfig = DecompileConfig(
-    inputJar = "sources/PinataParty-2.69.6.jar",
+    inputJar = "sources/PinataParty-2.69.8.jar",
     vineflowerVersion = "1.12.0",
     packageMappings = mapOf(
         "me/hexedhero/pp" to "."

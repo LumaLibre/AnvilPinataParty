@@ -1,8 +1,8 @@
 diff --git a/src/main/java/me/hexedhero/pp/entities/Pinata.java b/src/main/java/me/hexedhero/pp/entities/Pinata.java
-index 7206007..08d11de 100644
+index 59f4230..9c421a5 100644
 --- a/src/main/java/me/hexedhero/pp/entities/Pinata.java
 +++ b/src/main/java/me/hexedhero/pp/entities/Pinata.java
-@@ -5,11 +5,17 @@ import java.lang.reflect.Method;
+@@ -6,11 +6,17 @@ import java.lang.reflect.Method;
  import java.text.DecimalFormat;
  import java.util.ArrayList;
  import java.util.HashMap;
@@ -21,7 +21,7 @@ index 7206007..08d11de 100644
  import me.hexedhero.pp.PinataParty;
  import me.hexedhero.pp.api.AbilityType;
  import me.hexedhero.pp.api.PinataAbilityEvent;
-@@ -20,22 +26,29 @@ import me.hexedhero.pp.enums.EBarType;
+@@ -21,22 +27,29 @@ import me.hexedhero.pp.enums.EBarType;
  import me.hexedhero.pp.enums.EParticlesStyle;
  import me.hexedhero.pp.enums.EWhitelistType;
  import me.hexedhero.pp.objects.CommandReader;
@@ -52,24 +52,24 @@ index 7206007..08d11de 100644
  import org.bukkit.Particle;
  import org.bukkit.Sound;
  import org.bukkit.Tag;
-@@ -45,10 +58,13 @@ import org.bukkit.Particle.Spell;
+@@ -46,10 +59,12 @@ import org.bukkit.Particle.Spell;
  import org.bukkit.attribute.Attribute;
  import org.bukkit.attribute.AttributeModifier;
  import org.bukkit.attribute.AttributeModifier.Operation;
 -import org.bukkit.boss.BarColor;
 -import org.bukkit.boss.BarFlag;
+-import org.bukkit.boss.BarStyle;
+-import org.bukkit.boss.BossBar;
 +// Luma start - Folia support
 +//import org.bukkit.boss.BarColor;
 +//import org.bukkit.boss.BarFlag;
 +//import org.bukkit.boss.BarStyle;
 +//import org.bukkit.boss.BossBar;
 +// Luma end - Folia support
- import org.bukkit.boss.BarStyle;
--import org.bukkit.boss.BossBar;
  import org.bukkit.configuration.file.FileConfiguration;
  import org.bukkit.entity.ArmorStand;
  import org.bukkit.entity.Entity;
-@@ -63,8 +79,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
+@@ -64,8 +79,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
  import org.bukkit.metadata.FixedMetadataValue;
  import org.bukkit.potion.PotionEffect;
  import org.bukkit.potion.PotionEffectType;
@@ -78,7 +78,7 @@ index 7206007..08d11de 100644
  import org.bukkit.util.Vector;
  import org.jetbrains.annotations.NotNull;
  import org.jetbrains.annotations.Nullable;
-@@ -74,11 +88,13 @@ public class Pinata {
+@@ -75,11 +88,13 @@ public class Pinata {
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.0");
     private static final char[] COLOR_CHARS = new char[]{'0', '1', '2', '3', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     private static final Color[] FIREWORK_COLORS = new Color[]{Color.AQUA, Color.RED, Color.LIME, Color.ORANGE, Color.YELLOW, Color.FUCHSIA};
@@ -86,16 +86,16 @@ index 7206007..08d11de 100644
 -      BarColor.BLUE, BarColor.GREEN, BarColor.PINK, BarColor.PURPLE, BarColor.RED, BarColor.WHITE, BarColor.YELLOW
 +   // Luma start - Folia support
 +   private static final BossBar.Color[] BAR_COLORS = new BossBar.Color[]{
-+      BossBar.Color.BLUE, BossBar.Color.GREEN, BossBar.Color.PINK, BossBar.Color.PURPLE, BossBar.Color.RED, BossBar.Color.WHITE, BossBar.Color.YELLOW
++       BossBar.Color.BLUE, BossBar.Color.GREEN, BossBar.Color.PINK, BossBar.Color.PURPLE, BossBar.Color.RED, BossBar.Color.WHITE, BossBar.Color.YELLOW
     };
 +   // Luma end - Folia support
     private static final AttributeModifier SPEED_MODIFIER = new AttributeModifier(
 -      "pinataparty.speed", PinataParty.getInstance().getConfig().getDouble("pinata.speed-amplifier") - 1.0, Operation.ADD_SCALAR
-+      new NamespacedKey(PinataParty.getInstance(), "pinataparty.speed"), PinataParty.getInstance().getConfig().getDouble("pinata.speed-amplifier") - 1.0, Operation.ADD_SCALAR // Luma - Folia support
++       new NamespacedKey(PinataParty.getInstance(), "pinataparty.speed"), PinataParty.getInstance().getConfig().getDouble("pinata.speed-amplifier") - 1.0, Operation.ADD_SCALAR // Luma - Folia support
     );
     @Nullable
     private Llama pinata;
-@@ -87,7 +103,7 @@ public class Pinata {
+@@ -88,7 +103,7 @@ public class Pinata {
     @NotNull
     private EParticlesStyle particlesStyle = EParticlesStyle.SPARKS;
     @NotNull
@@ -104,7 +104,7 @@ index 7206007..08d11de 100644
     @Nullable
     private final Location spawnLocation;
     @Nullable
-@@ -97,7 +113,7 @@ public class Pinata {
+@@ -98,7 +113,7 @@ public class Pinata {
     @Nullable
     private BossBar countdownBossBar = null;
     @Nullable
@@ -113,7 +113,7 @@ index 7206007..08d11de 100644
     private final List<UUID> hitters = new ArrayList<>();
     private final Map<UUID, Long> lastHitTimes = new HashMap<>();
     private Player lastHitter = null;
-@@ -249,110 +265,118 @@ public class Pinata {
+@@ -250,110 +265,118 @@ public class Pinata {
        PinataParty.getInstance().getPinatas().add(this);
        if (this.CONFIG_BOSS_BAR_COUNTDOWN) {
           this.COUNTDOWN_START_COMMANDS.dispatchCommands();
@@ -129,6 +129,25 @@ index 7206007..08d11de 100644
 -                           new PluginSound("pinata.countdown.sounds.start").send(var2, false);
 -                        }
 -                     }
+-
+-                     Pinata.this.countdownBossBar = Bukkit.createBossBar(
+-                        new PluginMessage("pinata.countdown").applyPlaceholders("%time%", "" + this.length / 20.0).applyColor().getFirstMessage(),
+-                        BarColor.valueOf(
+-                           Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR.equalsIgnoreCase("RAINBOW")
+-                              ? Pinata.BAR_COLORS[Pinata.RANDOM.nextInt(Pinata.BAR_COLORS.length)].toString()
+-                              : Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR
+-                        ),
+-                        BarStyle.valueOf(Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_STYLE),
+-                        new BarFlag[0]
+-                     );
+-                     Pinata.this.countdownBossBar.setProgress(1.0);
+-                     Pinata.this.countdownBossBar.setVisible(true);
+-
+-                     for (Player var6 : Bukkit.getOnlinePlayers()) {
+-                        if (Common.shouldSeeBossBar(Pinata.this, var6, EBarType.COUNTDOWN)) {
+-                           Pinata.this.countdownBossBar.addPlayer(var6);
+-                        }
+-                     }
 +         // Luma start - Folia support
 +         int length = Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_LENGTH;
 +         AtomicInteger currentTick = new AtomicInteger();
@@ -142,38 +161,8 @@ index 7206007..08d11de 100644
 +                        new PluginSound("pinata.countdown.sounds.start").send(var2, false);
 +                     });
 +                     // Luma end - Folia support
-+                  }
+                   }
 +               }
- 
--                     Pinata.this.countdownBossBar = Bukkit.createBossBar(
--                        new PluginMessage("pinata.countdown").applyPlaceholders("%time%", "" + this.length / 20.0).applyColor().getFirstMessage(),
--                        BarColor.valueOf(
--                           Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR.equalsIgnoreCase("RAINBOW")
--                              ? Pinata.BAR_COLORS[Pinata.RANDOM.nextInt(Pinata.BAR_COLORS.length)].toString()
--                              : Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR
--                        ),
--                        BarStyle.valueOf(Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_STYLE),
--                        new BarFlag[0]
--                     );
--                     Pinata.this.countdownBossBar.setProgress(1.0);
--                     Pinata.this.countdownBossBar.setVisible(true);
-+               // Luma start - Folia support
-+               Component title = new PluginComponentMessage("pinata.countdown").applyPlaceholders("%time%", "" + length / 20.0).applyColor().getFirstComponent();
-+               BossBar.Color bossbarColor = BossBar.Color.valueOf(
-+                       Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR.equalsIgnoreCase("RAINBOW")
-+                               ? Pinata.BAR_COLORS[Pinata.RANDOM.nextInt(Pinata.BAR_COLORS.length)].toString()
-+                               : Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR
-+               );
-+               BossBar.Overlay bossBarStyle = BossBarColorHelper.bossBarOverlayFromLegacy(Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_STYLE);
- 
--                     for (Player var6 : Bukkit.getOnlinePlayers()) {
--                        if (Common.shouldSeeBossBar(Pinata.this, var6, EBarType.COUNTDOWN)) {
--                           Pinata.this.countdownBossBar.addPlayer(var6);
--                        }
--                     }
--                  }
-+               Pinata.this.countdownBossBar = BossBar.bossBar(title, 1.0f, bossbarColor, bossBarStyle);
-+               // Luma end - Folia support
  
 -                  Pinata.this.increaseHue();
 -                  if (Pinata.this.bossBarCountdownTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_UPDATE_RATE_TITLE == 0) {
@@ -192,12 +181,15 @@ index 7206007..08d11de 100644
 -                              .getFirstMessage()
 -                        );
 -                     Pinata.this.countdownBossBar.setProgress(MathHelper.clampNumber(1.0 - (double)this.currentTick / this.length, 0.0, 1.0));
-+               for (Player var6 : Bukkit.getOnlinePlayers()) {
-+                  if (Common.shouldSeeBossBar(Pinata.this, var6, EBarType.COUNTDOWN)) {
-+                     Pinata.this.countdownBossBar.addViewer(var6); // Luma - Folia support
-                   }
-+               }
-+            }
+-                  }
++               // Luma start - Folia support
++               Component title = new PluginComponentMessage("pinata.countdown").applyPlaceholders("%time%", "" + length / 20.0).applyColor().getFirstComponent();
++               BossBar.Color bossbarColor = BossBar.Color.valueOf(
++                   Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR.equalsIgnoreCase("RAINBOW")
++                       ? Pinata.BAR_COLORS[Pinata.RANDOM.nextInt(Pinata.BAR_COLORS.length)].toString()
++                       : Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR
++               );
++               BossBar.Overlay bossBarStyle = BossBarColorHelper.bossBarOverlayFromLegacy(Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_STYLE);
  
 -                  if (Pinata.this.bossBarCountdownColorTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_UPDATE_RATE_COLOR == 0
 -                     && Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR.equalsIgnoreCase("RAINBOW")) {
@@ -212,24 +204,8 @@ index 7206007..08d11de 100644
 -                        Pinata.this.countdownBossBar.setColor(Pinata.BAR_COLORS[Pinata.RANDOM.nextInt(Pinata.BAR_COLORS.length)]);
 -                     }
 -                  }
-+            Pinata.this.increaseHue();
-+            if (Pinata.this.bossBarCountdownTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_UPDATE_RATE_TITLE == 0) {
-+               Pinata.this.countdownBossBar
-+                       .name( // Luma - Folia support
-+                               new PluginComponentMessage("pinata.countdown") // Luma - Folia support
-+                                       .applyPlaceholders(
-+                                               "<rainbow>",
-+                                               Pinata.this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0")
-+                                                       ? Pinata.this.hex
-+                                                       : "&" + Pinata.COLOR_CHARS[Pinata.RANDOM.nextInt(Pinata.COLOR_CHARS.length)],
-+                                               "%time%",
-+                                               Pinata.NUMBER_FORMAT.format((length - currentTick.get()) / 20.0)
-+                                       )
-+                                       .applyColor()
-+                                       .getFirstComponent() // Luma - Folia support
-+                       );
-+               Pinata.this.countdownBossBar.progress((float) MathHelper.clampNumber(1.0 - (double)currentTick.get() / length, 0.0, 1.0)); // Luma - Folia support
-+            }
++               Pinata.this.countdownBossBar = BossBar.bossBar(title, 1.0f, bossbarColor, bossBarStyle);
++               // Luma end - Folia support
  
 -                  if (Pinata.this.bossBarCountdownSoundTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COUNT_INTERVAL == 0
 -                     && this.currentTick != this.length
@@ -239,18 +215,10 @@ index 7206007..08d11de 100644
 -                           new PluginSound("pinata.countdown.sounds.count").send(var7, false);
 -                        }
 -                     }
--                  }
-+            if (Pinata.this.bossBarCountdownColorTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_UPDATE_RATE_COLOR == 0
-+                    && Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR.equalsIgnoreCase("RAINBOW")) {
-+               if (Pinata.this.CONFIG_SMOOTH_RAINBOW) {
-+                  Pinata.this.countdownBossBar
-+                          .color( // Luma - Folia support
-+                                  BossBar.Color.valueOf( // Luma - Folia support
-+                                          BossBarColorHelper.getColorNameFromRgb(Pinata.this.rgb.getRed(), Pinata.this.rgb.getGreen(), Pinata.this.rgb.getBlue())
-+                                  )
-+                          );
-+               } else {
-+                  Pinata.this.countdownBossBar.color(Pinata.BAR_COLORS[Pinata.RANDOM.nextInt(Pinata.BAR_COLORS.length)]); // Luma - Folia support
++               for (Player var6 : Bukkit.getOnlinePlayers()) {
++                  if (Common.shouldSeeBossBar(Pinata.this, var6, EBarType.COUNTDOWN)) {
++                     Pinata.this.countdownBossBar.addViewer(var6); // Luma - Folia support
+                   }
 +               }
 +            }
  
@@ -260,14 +228,23 @@ index 7206007..08d11de 100644
 -                           new PluginSound("pinata.countdown.sounds.end").send(var8, false);
 -                        }
 -                     }
-+            if (Pinata.this.bossBarCountdownSoundTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COUNT_INTERVAL == 0
-+                    && currentTick.get() != length
-+                    && currentTick.get() > 1) {
-+               for (Player var7 : Bukkit.getOnlinePlayers()) {
-+                  if (Common.shouldSeeBossBar(Pinata.this, var7, EBarType.COUNTDOWN)) {
-+                     new PluginSound("pinata.countdown.sounds.count").send(var7, false);
-+                  }
-+               }
++            Pinata.this.increaseHue();
++            if (Pinata.this.bossBarCountdownTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_UPDATE_RATE_TITLE == 0) {
++               Pinata.this.countdownBossBar
++                   .name( // Luma - Folia support
++                       new PluginComponentMessage("pinata.countdown") // Luma - Folia support
++                           .applyPlaceholders(
++                               "<rainbow>",
++                               Pinata.this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0")
++                                   ? Pinata.this.hex
++                                   : "&" + Pinata.COLOR_CHARS[Pinata.RANDOM.nextInt(Pinata.COLOR_CHARS.length)],
++                               "%time%",
++                               Pinata.NUMBER_FORMAT.format((length - currentTick.get()) / 20.0)
++                           )
++                           .applyColor()
++                           .getFirstComponent() // Luma - Folia support
++                   );
++               Pinata.this.countdownBossBar.progress((float) MathHelper.clampNumber(1.0 - (double)currentTick.get() / length, 0.0, 1.0)); // Luma - Folia support
 +            }
  
 -                     Pinata.this.countdownBossBar.removeAll();
@@ -275,6 +252,30 @@ index 7206007..08d11de 100644
 -                     this.cancel();
 -                     Pinata.this.COUNTDOWN_END_COMMANDS.dispatchCommands();
 -                     Pinata.this.preSummonPinata();
++            if (Pinata.this.bossBarCountdownColorTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_UPDATE_RATE_COLOR == 0
++                && Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COLOR.equalsIgnoreCase("RAINBOW")) {
++               if (Pinata.this.CONFIG_SMOOTH_RAINBOW) {
++                  Pinata.this.countdownBossBar
++                      .color( // Luma - Folia support
++                          BossBar.Color.valueOf( // Luma - Folia support
++                              BossBarColorHelper.getColorNameFromRgb(Pinata.this.rgb.getRed(), Pinata.this.rgb.getGreen(), Pinata.this.rgb.getBlue())
++                          )
++                      );
++               } else {
++                  Pinata.this.countdownBossBar.color(Pinata.BAR_COLORS[Pinata.RANDOM.nextInt(Pinata.BAR_COLORS.length)]); // Luma - Folia support
++               }
++            }
++
++            if (Pinata.this.bossBarCountdownSoundTick++ % Pinata.this.CONFIG_BOSS_BAR_COUNTDOWN_COUNT_INTERVAL == 0
++                && currentTick.get() != length
++                && currentTick.get() > 1) {
++               for (Player var7 : Bukkit.getOnlinePlayers()) {
++                  if (Common.shouldSeeBossBar(Pinata.this, var7, EBarType.COUNTDOWN)) {
++                     new PluginSound("pinata.countdown.sounds.count").send(var7, false);
++                  }
++               }
++            }
++
 +            if (currentTick.get() >= length) {
 +               for (Player var8 : Bukkit.getOnlinePlayers()) {
 +                  if (Common.shouldSeeBossBar(Pinata.this, var8, EBarType.COUNTDOWN)) {
@@ -317,7 +318,24 @@ index 7206007..08d11de 100644
        });
     }
  
-@@ -381,6 +405,7 @@ public class Pinata {
+@@ -361,11 +384,11 @@ public class Pinata {
+       this.pinata = (Llama)this.spawnLocation.getWorld().spawnEntity(this.spawnLocation, EntityType.LLAMA);
+       if (!this.pinata.isValid()) {
+          Common.tellConsole(
+-            true,
+-            "&c--- PINATA SPAWN ERROR ---",
+-            "&cThe Pinata failed to spawn!",
+-            "&cThis is MOST likely caused by another plugin cancelling the spawn event,",
+-            "see plugins such as WorldGuard and set \"block-plugin-spawning\" in the config to false."
++             true,
++             "&c--- PINATA SPAWN ERROR ---",
++             "&cThe Pinata failed to spawn!",
++             "&cThis is MOST likely caused by another plugin cancelling the spawn event,",
++             "see plugins such as WorldGuard and set \"block-plugin-spawning\" in the config to false."
+          );
+       }
+ 
+@@ -382,27 +405,28 @@ public class Pinata {
        this.pinata.setAdult();
        this.pinata.setColor(this.llamaColor);
        this.pinata.setSilent(true);
@@ -325,7 +343,38 @@ index 7206007..08d11de 100644
  
        try {
           Class<Attribute> var1 = Attribute.class;
-@@ -423,26 +448,26 @@ public class Pinata {
+          Method var2 = var1.getMethod("valueOf", String.class);
+          this.pinata
+-            .getAttribute(
+-               (Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "KNOCKBACK_RESISTANCE" : "GENERIC_KNOCKBACK_RESISTANCE")
+-            )
+-            .setBaseValue(1.0);
++             .getAttribute(
++                 (Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "KNOCKBACK_RESISTANCE" : "GENERIC_KNOCKBACK_RESISTANCE")
++             )
++             .setBaseValue(1.0);
+          this.pinata
+-            .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MAX_HEALTH" : "GENERIC_MAX_HEALTH"))
+-            .setBaseValue(1024.0);
++             .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MAX_HEALTH" : "GENERIC_MAX_HEALTH"))
++             .setBaseValue(1024.0);
+          this.pinata.setRemoveWhenFarAway(false);
+          if (this.CONFIG_ALLOW_MOVEMENT) {
+             this.pinata
+-               .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MOVEMENT_SPEED" : "GENERIC_MOVEMENT_SPEED"))
+-               .addModifier(SPEED_MODIFIER);
++                .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MOVEMENT_SPEED" : "GENERIC_MOVEMENT_SPEED"))
++                .addModifier(SPEED_MODIFIER);
+          } else {
+             this.pinata
+-               .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MOVEMENT_SPEED" : "GENERIC_MOVEMENT_SPEED"))
+-               .setBaseValue(0.0);
++                .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MOVEMENT_SPEED" : "GENERIC_MOVEMENT_SPEED"))
++                .setBaseValue(0.0);
+          }
+       } catch (Exception var6) {
+          Common.tellConsole(true, "&c--- PINATA SPAWN ERROR ---", "&cSomething went wrong when setting Pinata attributes,", "&cPlease report this!");
+@@ -433,26 +457,26 @@ public class Pinata {
        this.hologram.setGravity(false);
        this.hologram.setCustomNameVisible(true);
        this.hologram.setMetadata("PinataParty", new FixedMetadataValue(PinataParty.getInstance(), true));
@@ -346,13 +395,13 @@ index 7206007..08d11de 100644
 +
 +         // Luma start - Folia support
 +         Component title = new PluginComponentMessage("pinata.boss-bar")
-+                 .applyPlaceholders("%hit%", "" + this.health, "%S%", this.health > 1 ? "S" : "", "%s%", this.health > 1 ? "s" : "")
-+                 .applyColor()
-+                 .getFirstComponent();
++             .applyPlaceholders("%hit%", "" + this.health, "%S%", this.health > 1 ? "S" : "", "%s%", this.health > 1 ? "s" : "")
++             .applyColor()
++             .getFirstComponent();
 +         BossBar.Color bossbarColor = BossBar.Color.valueOf(
-+                 this.CONFIG_BOSS_BAR_HEALTH_COLOR.equalsIgnoreCase("RAINBOW")
-+                         ? BAR_COLORS[RANDOM.nextInt(BAR_COLORS.length)].toString()
-+                         : this.CONFIG_BOSS_BAR_HEALTH_COLOR
++             this.CONFIG_BOSS_BAR_HEALTH_COLOR.equalsIgnoreCase("RAINBOW")
++                 ? BAR_COLORS[RANDOM.nextInt(BAR_COLORS.length)].toString()
++                 : this.CONFIG_BOSS_BAR_HEALTH_COLOR
           );
 -         this.healthBossBar.setProgress(1.0);
 -         this.healthBossBar.setVisible(true);
@@ -360,22 +409,46 @@ index 7206007..08d11de 100644
 +         this.healthBossBar = BossBar.bossBar(title, 1.0f, bossbarColor, bossBarStyle);
 +         // Luma end - Folia support
  
-          for (Player var8 : Bukkit.getOnlinePlayers()) {
-             if (Common.shouldSeeBossBar(this, var8, EBarType.HEALTH)) {
--               this.healthBossBar.addPlayer(var8);
-+               this.healthBossBar.addViewer(var8); // Luma - Folia support
+          for (Player var9 : Bukkit.getOnlinePlayers()) {
+             if (Common.shouldSeeBossBar(this, var9, EBarType.HEALTH)) {
+-               this.healthBossBar.addPlayer(var9);
++               this.healthBossBar.addViewer(var9); // Luma - Folia support
              }
           }
        }
-@@ -469,13 +494,13 @@ public class Pinata {
-             )
-             .applyColor()
-             .send(Bukkit.getOnlinePlayers());
+@@ -467,25 +491,25 @@ public class Pinata {
+       } else {
+          this.SPAWN_COMMANDS.dispatchCommands();
+          new PluginMessage("spawn")
+-            .applyPlaceholders(
+-               "%x%",
+-               Integer.toString(this.pinata.getLocation().getBlockX()),
+-               "%y%",
+-               Integer.toString(this.pinata.getLocation().getBlockY()),
+-               "%z%",
+-               Integer.toString(this.pinata.getLocation().getBlockZ()),
+-               "%world%",
+-               this.pinata.getWorld().getName()
+-            )
+-            .applyColor()
+-            .send(Bukkit.getOnlinePlayers());
 -         (new BukkitRunnable() {
 -            public void run() {
 -               if (Pinata.this.tick()) {
 -                  this.cancel();
 -               }
++             .applyPlaceholders(
++                 "%x%",
++                 Integer.toString(this.pinata.getLocation().getBlockX()),
++                 "%y%",
++                 Integer.toString(this.pinata.getLocation().getBlockY()),
++                 "%z%",
++                 Integer.toString(this.pinata.getLocation().getBlockZ()),
++                 "%world%",
++                 this.pinata.getWorld().getName()
++             )
++             .applyColor()
++             .send(Bukkit.getOnlinePlayers());
 +         // Luma start - Folia support
 +         ScheduleHelper.runTaskTimer(this.pinata, task -> {
 +            if (Pinata.this.tick()) {
@@ -387,41 +460,125 @@ index 7206007..08d11de 100644
  
           for (Player var3 : Bukkit.getOnlinePlayers()) {
              HitHelper.getHitAmount().put(var3.getUniqueId(), 1);
-@@ -528,8 +553,8 @@ public class Pinata {
+@@ -509,28 +533,28 @@ public class Pinata {
+ 
+    private void updatePinataName() {
+       this.pinata
+-         .setCustomName(
+-            new PluginMessage("pinata.name")
+-               .applyPlaceholders(
+-                  "<rainbow>",
+-                  this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0")
+-                     ? this.hex
+-                     : "&" + COLOR_CHARS[RANDOM.nextInt(COLOR_CHARS.length)]
+-               )
+-               .applyColor()
+-               .getFirstMessage()
+-         );
++          .setCustomName(
++              new PluginMessage("pinata.name")
++                  .applyPlaceholders(
++                      "<rainbow>",
++                      this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0")
++                          ? this.hex
++                          : "&" + COLOR_CHARS[RANDOM.nextInt(COLOR_CHARS.length)]
++                  )
++                  .applyColor()
++                  .getFirstMessage()
++          );
+    }
+ 
+    private void updateHologram() {
+       if (this.hologram != null && this.hologram.isValid()) {
+          this.hologram
+-            .setCustomName(
+-               new PluginMessage("pinata.hits-left")
+-                  .applyPlaceholders("%hit%", "" + this.health, "%S%", this.health > 1 ? "S" : "", "%s%", this.health > 1 ? "s" : "")
+-                  .applyColor()
+-                  .getFirstMessage()
+-            );
++             .setCustomName(
++                 new PluginMessage("pinata.hits-left")
++                     .applyPlaceholders("%hit%", "" + this.health, "%S%", this.health > 1 ? "S" : "", "%s%", this.health > 1 ? "s" : "")
++                     .applyColor()
++                     .getFirstMessage()
++             );
+       }
+    }
+ 
+@@ -538,33 +562,33 @@ public class Pinata {
        if (this.healthBossBar != null) {
           if (this.bossBarHealthTick++ % this.CONFIG_BOSS_BAR_HEALTH_UPDATE_RATE_TITLE == 0) {
              this.healthBossBar
 -               .setTitle(
 -                  new PluginMessage("pinata.boss-bar")
-+               .name( // Luma - Folia support
-+                  new PluginComponentMessage("pinata.boss-bar") // Luma - Folia support
-                      .applyPlaceholders(
-                         "<rainbow>",
-                         this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0")
-@@ -543,18 +568,18 @@ public class Pinata {
-                         this.health > 1 ? "s" : ""
-                      )
-                      .applyColor()
+-                     .applyPlaceholders(
+-                        "<rainbow>",
+-                        this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0")
+-                           ? this.hex
+-                           : "&" + COLOR_CHARS[RANDOM.nextInt(COLOR_CHARS.length)],
+-                        "%hit%",
+-                        "" + this.health,
+-                        "%S%",
+-                        this.health > 1 ? "S" : "",
+-                        "%s%",
+-                        this.health > 1 ? "s" : ""
+-                     )
+-                     .applyColor()
 -                     .getFirstMessage()
-+                     .getFirstComponent() // Luma - Folia support
-                );
+-               );
 -            this.healthBossBar.setProgress(MathHelper.clampNumber(Double.valueOf((double)this.health) / Double.valueOf((double)this.startingHealth), 0.0, 1.0));
++                .name( // Luma - Folia support
++                    new PluginComponentMessage("pinata.boss-bar") // Luma - Folia support
++                        .applyPlaceholders(
++                            "<rainbow>",
++                            this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0")
++                                ? this.hex
++                                : "&" + COLOR_CHARS[RANDOM.nextInt(COLOR_CHARS.length)],
++                            "%hit%",
++                            "" + this.health,
++                            "%S%",
++                            this.health > 1 ? "S" : "",
++                            "%s%",
++                            this.health > 1 ? "s" : ""
++                        )
++                        .applyColor()
++                        .getFirstComponent() // Luma - Folia support
++                );
 +            this.healthBossBar.progress((float) MathHelper.clampNumber((double) this.health / (double) this.startingHealth, 0.0, 1.0)); // Luma - Folia support
           }
  
           if (this.bossBarHealthColorTick++ % this.CONFIG_BOSS_BAR_HEALTH_UPDATE_RATE_COLOR == 0
-             && this.CONFIG_BOSS_BAR_HEALTH_COLOR.equalsIgnoreCase("RAINBOW")) {
+-            && this.CONFIG_BOSS_BAR_HEALTH_COLOR.equalsIgnoreCase("RAINBOW")) {
++             && this.CONFIG_BOSS_BAR_HEALTH_COLOR.equalsIgnoreCase("RAINBOW")) {
              if (this.CONFIG_SMOOTH_RAINBOW) {
                 this.healthBossBar
 -                  .setColor(BarColor.valueOf(BossBarColorHelper.getColorNameFromRgb(this.rgb.getRed(), this.rgb.getGreen(), this.rgb.getBlue())));
-+                  .color(BossBar.Color.valueOf(BossBarColorHelper.getColorNameFromRgb(this.rgb.getRed(), this.rgb.getGreen(), this.rgb.getBlue()))); // Luma - Folia support
++                   .color(BossBar.Color.valueOf(BossBarColorHelper.getColorNameFromRgb(this.rgb.getRed(), this.rgb.getGreen(), this.rgb.getBlue()))); // Luma - Folia support
              } else {
 -               this.healthBossBar.setColor(BAR_COLORS[RANDOM.nextInt(BAR_COLORS.length)]);
 +               this.healthBossBar.color(BAR_COLORS[RANDOM.nextInt(BAR_COLORS.length)]); // Luma - Folia support
              }
           }
        }
-@@ -593,16 +618,16 @@ public class Pinata {
+@@ -576,11 +600,11 @@ public class Pinata {
+             Class<Attribute> var1 = Attribute.class;
+             Method var2 = var1.getMethod("valueOf", String.class);
+             this.pinata
+-               .setHealth(
+-                  this.pinata
+-                     .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MAX_HEALTH" : "GENERIC_MAX_HEALTH"))
+-                     .getBaseValue()
+-               );
++                .setHealth(
++                    this.pinata
++                        .getAttribute((Attribute)var2.invoke(null, VersionHelper.isRunningVersionSameOrNewer("1.21.3") ? "MAX_HEALTH" : "GENERIC_MAX_HEALTH"))
++                        .getBaseValue()
++                );
+          } catch (Exception var15) {
+          }
+ 
+@@ -603,16 +627,16 @@ public class Pinata {
           }
  
           if (this.lastHitTime + 30000L < System.currentTimeMillis()) {
@@ -441,7 +598,18 @@ index 7206007..08d11de 100644
           this.increaseHue();
           if (this.nameTick++ % (this.CONFIG_SMOOTH_RAINBOW && VersionHelper.isRunningVersionSameOrNewer("1.16.0") ? 1 : 5) == 0) {
              this.updatePinataName();
-@@ -712,14 +737,14 @@ public class Pinata {
+@@ -645,8 +669,8 @@ public class Pinata {
+             } else if (VersionHelper.isRunningVersionSameOrNewer("1.13.0")) {
+                try {
+                   this.pinata
+-                     .getInventory()
+-                     .setDecor(new ItemStack(Material.valueOf(this.CONFIG_CARPET_TYPE.replace(" ", "_").toUpperCase().replace("_CARPET", "") + "_CARPET")));
++                      .getInventory()
++                      .setDecor(new ItemStack(Material.valueOf(this.CONFIG_CARPET_TYPE.replace(" ", "_").toUpperCase().replace("_CARPET", "") + "_CARPET")));
+                } catch (Exception var14) {
+                }
+             } else if (this.carpetTick <= 0) {
+@@ -722,14 +746,14 @@ public class Pinata {
                 }
              } else {
                 try {
@@ -458,7 +626,199 @@ index 7206007..08d11de 100644
              PathResult var21 = this.pinata.getPathfinder().getCurrentPath();
              if (var21 != null && (this.currentPath == null || this.currentPath.equals(var21))) {
                 this.pinata.getPathfinder().stopPathfinding();
-@@ -868,49 +893,47 @@ public class Pinata {
+@@ -757,47 +781,47 @@ public class Pinata {
+                      double var9 = 2.0 * Math.sin(this.particleTick + (Math.PI * 2) * var29 / 3.0);
+                      if (VersionHelper.isRunningVersionSameOrNewer("1.21.10")) {
+                         this.pinata
+-                           .getWorld()
+-                           .spawnParticle(Particle.INSTANT_EFFECT, this.pinata.getLocation().clone().add(var5, var7, var9), 1, new Spell(Color.WHITE, 1.0F));
++                            .getWorld()
++                            .spawnParticle(Particle.INSTANT_EFFECT, this.pinata.getLocation().clone().add(var5, var7, var9), 1, new Spell(Color.WHITE, 1.0F));
+                      } else {
+                         this.pinata
+-                           .getWorld()
+-                           .spawnParticle(
+-                              VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.INSTANT_EFFECT : Particle.valueOf("SPELL_INSTANT"),
+-                              this.pinata.getLocation().clone().add(var5, var7, var9),
+-                              0
+-                           );
++                            .getWorld()
++                            .spawnParticle(
++                                VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.INSTANT_EFFECT : Particle.valueOf("SPELL_INSTANT"),
++                                this.pinata.getLocation().clone().add(var5, var7, var9),
++                                0
++                            );
+                      }
+                   }
+                }
+ 
+                this.pinata.getWorld().spawnParticle(Particle.END_ROD, this.pinata.getLocation().add(0.0, 0.7, 0.0), 1, 0.0, 0.0, 0.0, 0.3);
+                this.pinata
+-                  .getWorld()
+-                  .spawnParticle(
+-                     VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.FIREWORK : Particle.valueOf("FIREWORKS_SPARK"),
+-                     this.pinata.getLocation().add(0.0, 0.7, 0.0),
+-                     1,
+-                     0.0,
+-                     0.0,
+-                     0.0,
+-                     0.3
+-                  );
++                   .getWorld()
++                   .spawnParticle(
++                       VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.FIREWORK : Particle.valueOf("FIREWORKS_SPARK"),
++                       this.pinata.getLocation().add(0.0, 0.7, 0.0),
++                       1,
++                       0.0,
++                       0.0,
++                       0.0,
++                       0.3
++                   );
+             } else if (this.particlesStyle.equals(EParticlesStyle.SALTY)) {
+                if (RANDOM.nextBoolean()) {
+                   this.pinata.getWorld().spawnParticle(Particle.END_ROD, this.pinata.getLocation().add(0.0, 1.0, 0.0), 1, 0.75, 1.0, 1.0, 0.05);
+                } else {
+                   this.pinata
+-                     .getWorld()
+-                     .spawnParticle(
+-                        VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.FIREWORK : Particle.valueOf("FIREWORKS_SPARK"),
+-                        this.pinata.getLocation().add(0.0, 1.0, 0.0),
+-                        1,
+-                        0.75,
+-                        1.0,
+-                        1.0,
+-                        0.075
+-                     );
++                      .getWorld()
++                      .spawnParticle(
++                          VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.FIREWORK : Particle.valueOf("FIREWORKS_SPARK"),
++                          this.pinata.getLocation().add(0.0, 1.0, 0.0),
++                          1,
++                          0.75,
++                          1.0,
++                          1.0,
++                          0.075
++                      );
+                }
+             } else if (this.particlesStyle.equals(EParticlesStyle.FIRESTORM)) {
+                for (int var23 = 0; var23 < 2; var23++) {
+@@ -811,28 +835,28 @@ public class Pinata {
+                   }
+ 
+                   this.pinata
+-                     .getWorld()
+-                     .spawnParticle(
+-                        VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.SMOKE : Particle.valueOf("SMOKE_NORMAL"),
+-                        this.pinata.getLocation().add(0.0, 1.0, 0.0),
+-                        1,
+-                        0.75,
+-                        1.0,
+-                        1.0,
+-                        0.075
+-                     );
++                      .getWorld()
++                      .spawnParticle(
++                          VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.SMOKE : Particle.valueOf("SMOKE_NORMAL"),
++                          this.pinata.getLocation().add(0.0, 1.0, 0.0),
++                          1,
++                          0.75,
++                          1.0,
++                          1.0,
++                          0.075
++                      );
+                   if (RANDOM.nextDouble() <= 0.3) {
+                      this.pinata
+-                        .getWorld()
+-                        .spawnParticle(
+-                           VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.LARGE_SMOKE : Particle.valueOf("SMOKE_LARGE"),
+-                           this.pinata.getLocation().add(0.0, 0.7, 0.0),
+-                           1,
+-                           0.0,
+-                           0.0,
+-                           0.0,
+-                           0.125
+-                        );
++                         .getWorld()
++                         .spawnParticle(
++                             VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.LARGE_SMOKE : Particle.valueOf("SMOKE_LARGE"),
++                             this.pinata.getLocation().add(0.0, 0.7, 0.0),
++                             1,
++                             0.0,
++                             0.0,
++                             0.0,
++                             0.125
++                         );
+                   }
+ 
+                   if (RANDOM.nextDouble() <= 0.1) {
+@@ -841,101 +865,99 @@ public class Pinata {
+                }
+             } else if (this.particlesStyle.equals(EParticlesStyle.WATERWORKS)) {
+                this.pinata
+-                  .getWorld()
+-                  .spawnParticle(
+-                     VersionHelper.isRunningVersionSameOrNewer("1.14.0") ? Particle.FALLING_WATER : Particle.valueOf("DRIP_WATER"),
+-                     this.pinata.getLocation().add(0.0, 0.5, 0.0),
+-                     RANDOM.nextInt(8),
+-                     0.5,
+-                     0.5,
+-                     0.5,
+-                     0.0
+-                  );
++                   .getWorld()
++                   .spawnParticle(
++                       VersionHelper.isRunningVersionSameOrNewer("1.14.0") ? Particle.FALLING_WATER : Particle.valueOf("DRIP_WATER"),
++                       this.pinata.getLocation().add(0.0, 0.5, 0.0),
++                       RANDOM.nextInt(8),
++                       0.5,
++                       0.5,
++                       0.5,
++                       0.0
++                   );
+                if (VersionHelper.isRunningVersionSameOrNewer("1.13.0")) {
+                   this.pinata
+-                     .getWorld()
+-                     .spawnParticle(
+-                        VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
+-                        this.pinata.getLocation().add(0.0, 0.025, 0.0),
+-                        RANDOM.nextInt(3),
+-                        0.5,
+-                        0.025,
+-                        0.5,
+-                        new DustOptions(RANDOM.nextBoolean() ? Color.BLUE : Color.AQUA, Math.max(0.01F, RANDOM.nextFloat()))
+-                     );
++                      .getWorld()
++                      .spawnParticle(
++                          VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
++                          this.pinata.getLocation().add(0.0, 0.025, 0.0),
++                          RANDOM.nextInt(3),
++                          0.5,
++                          0.025,
++                          0.5,
++                          new DustOptions(RANDOM.nextBoolean() ? Color.BLUE : Color.AQUA, Math.max(0.01F, RANDOM.nextFloat()))
++                      );
+                   if (RANDOM.nextDouble() <= 0.6) {
+                      this.pinata
+-                        .getWorld()
+-                        .spawnParticle(
+-                           VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.BLOCK : Particle.valueOf("BLOCK_DUST"),
+-                           this.pinata.getLocation().add(0.0, 0.5, 0.0),
+-                           1,
+-                           0.5,
+-                           0.5,
+-                           0.5,
+-                           Material.WATER.createBlockData()
+-                        );
++                         .getWorld()
++                         .spawnParticle(
++                             VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.BLOCK : Particle.valueOf("BLOCK_DUST"),
++                             this.pinata.getLocation().add(0.0, 0.5, 0.0),
++                             1,
++                             0.5,
++                             0.5,
++                             0.5,
++                             Material.WATER.createBlockData()
++                         );
                    }
  
                    if (RANDOM.nextDouble() <= 0.015) {
@@ -475,70 +835,77 @@ index 7206007..08d11de 100644
 -                                 this.cancel();
 -                              } else {
 -                                 this.size = this.size - 1.0F / this.length;
--                                 Location var1 = this.location
--                                    .add(Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05, 0.05, Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05);
--                                 Pinata.this.pinata
--                                    .getWorld()
--                                    .spawnParticle(
--                                       VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
--                                       var1,
--                                       1,
--                                       0.05,
--                                       0.05,
--                                       0.05,
--                                       new DustOptions(Color.AQUA, this.size)
--                                    );
--                                 if (Pinata.RANDOM.nextBoolean() && this.size <= 0.15F) {
+-                                 if (this.size < 0.01F) {
+-                                    this.cancel();
+-                                 } else {
+-                                    Location var1 = this.location
+-                                       .add(Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05, 0.05, Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05);
 -                                    Pinata.this.pinata
 -                                       .getWorld()
 -                                       .spawnParticle(
--                                          VersionHelper.isRunningVersionSameOrNewer("1.14.0") ? Particle.FALLING_WATER : Particle.valueOf("DRIP_WATER"),
+-                                          VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
 -                                          var1,
 -                                          1,
--                                          0.0,
--                                          0.0,
--                                          0.0,
--                                          0.0
+-                                          0.05,
+-                                          0.05,
+-                                          0.05,
+-                                          new DustOptions(Color.AQUA, this.size)
 -                                       );
+-                                    if (Pinata.RANDOM.nextBoolean() && this.size <= 0.15F) {
+-                                       Pinata.this.pinata
+-                                          .getWorld()
+-                                          .spawnParticle(
+-                                             VersionHelper.isRunningVersionSameOrNewer("1.14.0") ? Particle.FALLING_WATER : Particle.valueOf("DRIP_WATER"),
+-                                             var1,
+-                                             1,
+-                                             0.0,
+-                                             0.0,
+-                                             0.0,
+-                                             0.0
+-                                          );
+-                                    }
 -                                 }
--                              }
 +                     // Luma start - Folia support
 +                     AtomicInteger ticks = new AtomicInteger();
 +                     AtomicReference<Float> size = new AtomicReference<>(1.0F);
 +                     int length = Pinata.RANDOM.nextInt(20) + 30;
 +                     Location location = Pinata.this.pinata
-+                        .getLocation()
-+                        .add(Pinata.RANDOM.nextDouble() - 0.5, Pinata.RANDOM.nextDouble() + 0.5, Pinata.RANDOM.nextDouble() - 0.5);
++                         .getLocation()
++                         .add(Pinata.RANDOM.nextDouble() - 0.5, Pinata.RANDOM.nextDouble() + 0.5, Pinata.RANDOM.nextDouble() - 0.5);
 +                     ScheduleHelper.runTaskTimer(location, task -> {
 +                        if (ticks.getAndIncrement() > length) {
 +                           task.cancel();
 +                        } else {
 +                           size.set(size.get() - 1.0F / length);
-+                           Location var1 = location
-+                              .add(Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05, 0.05, Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05);
-+                           Pinata.this.pinata
-+                              .getWorld()
-+                              .spawnParticle(
-+                                 VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
-+                                 var1,
-+                                 1,
-+                                 0.05,
-+                                 0.05,
-+                                 0.05,
-+                                 new DustOptions(Color.AQUA, size.get())
-+                              );
-+                           if (Pinata.RANDOM.nextBoolean() && size.get() <= 0.15F) {
++                           if (size.get() < 0.01F) {
++                              task.cancel();
++                           } else {
++                              Location var1 = location
++                                  .add(Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05, 0.05, Pinata.RANDOM.nextBoolean() ? 0.05 : -0.05);
 +                              Pinata.this.pinata
-+                                 .getWorld()
-+                                 .spawnParticle(
-+                                    VersionHelper.isRunningVersionSameOrNewer("1.14.0") ? Particle.FALLING_WATER : Particle.valueOf("DRIP_WATER"),
-+                                    var1,
-+                                    1,
-+                                    0.0,
-+                                    0.0,
-+                                    0.0,
-+                                    0.0
-+                                 );
++                                  .getWorld()
++                                  .spawnParticle(
++                                      VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
++                                      var1,
++                                      1,
++                                      0.05,
++                                      0.05,
++                                      0.05,
++                                      new DustOptions(Color.AQUA, size.get())
++                                  );
++                              if (Pinata.RANDOM.nextBoolean() && size.get() <= 0.15F) {
++                                 Pinata.this.pinata
++                                     .getWorld()
++                                     .spawnParticle(
++                                         VersionHelper.isRunningVersionSameOrNewer("1.14.0") ? Particle.FALLING_WATER : Particle.valueOf("DRIP_WATER"),
++                                         var1,
++                                         1,
++                                         0.0,
++                                         0.0,
++                                         0.0,
++                                         0.0
++                                     );
+                               }
                             }
 -                        })
 -                        .runTaskTimer(PinataParty.getInstance(), 1L, 1L);
@@ -548,7 +915,47 @@ index 7206007..08d11de 100644
                    }
                 }
              } else if (this.particlesStyle.equals(EParticlesStyle.ENDER_ECLIPSE)) {
-@@ -958,64 +981,62 @@ public class Pinata {
+                for (int var24 = 0; var24 < RANDOM.nextInt(4); var24++) {
+                   Location var31 = this.pinata
+-                     .getLocation()
+-                     .add(
+-                        RANDOM.nextBoolean() ? RANDOM.nextDouble() * 3.0 : RANDOM.nextDouble() * 3.0 - 3.0,
+-                        RANDOM.nextDouble() - 0.5,
+-                        RANDOM.nextBoolean() ? RANDOM.nextDouble() * 3.0 : RANDOM.nextDouble() * 3.0 - 3.0
+-                     );
++                      .getLocation()
++                      .add(
++                          RANDOM.nextBoolean() ? RANDOM.nextDouble() * 3.0 : RANDOM.nextDouble() * 3.0 - 3.0,
++                          RANDOM.nextDouble() - 0.5,
++                          RANDOM.nextBoolean() ? RANDOM.nextDouble() * 3.0 : RANDOM.nextDouble() * 3.0 - 3.0
++                      );
+                   if (RANDOM.nextDouble() > 0.3) {
+                      if (VersionHelper.isRunningVersionSameOrNewer("1.21.10")) {
+                         var31.getWorld().spawnParticle(Particle.DRAGON_BREATH, var31, 0, 0.0, 1.0, 0.0, RANDOM.nextDouble() / 8.0, 1.0F);
+@@ -958,78 +980,76 @@ public class Pinata {
+                         double var36 = 0.2 * (1.1 + Math.sin(this.particleTick * 1.5));
+                         double var38 = 2.0 * Math.sin(this.particleTick + (Math.PI * 2) * var32 / 3.0);
+                         DustOptions var11 = RANDOM.nextBoolean()
+-                           ? new DustOptions(Color.fromRGB(100, 0, 150), 1.0F)
+-                           : (RANDOM.nextBoolean() ? new DustOptions(Color.fromRGB(50, 0, 75), 1.0F) : new DustOptions(Color.fromRGB(25, 0, 37), 1.0F));
++                            ? new DustOptions(Color.fromRGB(100, 0, 150), 1.0F)
++                            : (RANDOM.nextBoolean() ? new DustOptions(Color.fromRGB(50, 0, 75), 1.0F) : new DustOptions(Color.fromRGB(25, 0, 37), 1.0F));
+                         this.pinata
+-                           .getWorld()
+-                           .spawnParticle(
+-                              VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
+-                              this.pinata.getLocation().clone().add(var34, var36, var38),
+-                              0,
+-                              var11
+-                           );
++                            .getWorld()
++                            .spawnParticle(
++                                VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
++                                this.pinata.getLocation().clone().add(var34, var36, var38),
++                                0,
++                                var11
++                            );
+                      }
                    }
  
                    if (RANDOM.nextDouble() > 0.96) {
@@ -564,52 +971,7 @@ index 7206007..08d11de 100644
 -                                 Pinata.RANDOM.nextDouble() * 2.0 + 2.0,
 -                                 Pinata.RANDOM.nextBoolean() ? Pinata.RANDOM.nextDouble() * 3.0 : Pinata.RANDOM.nextDouble() * 3.0 - 3.0
 -                              );
-+                     // Luma start - Folia support
-+                     AtomicBoolean introEffect = new AtomicBoolean(false);
-+                     AtomicInteger ticks = new AtomicInteger(-6);
-+                     int length = 50;
-+                     double size = 0.3 * Math.max(Pinata.RANDOM.nextDouble(), 0.6);
-+                     final Location sourceLocation = Pinata.this.pinata
-+                        .getLocation()
-+                        .add(
-+                           Pinata.RANDOM.nextBoolean() ? Pinata.RANDOM.nextDouble() * 3.0 : Pinata.RANDOM.nextDouble() * 3.0 - 3.0,
-+                           Pinata.RANDOM.nextDouble() * 2.0 + 2.0,
-+                           Pinata.RANDOM.nextBoolean() ? Pinata.RANDOM.nextDouble() * 3.0 : Pinata.RANDOM.nextDouble() * 3.0 - 3.0
-+                        );
-+                     ScheduleHelper.runTaskTimer(sourceLocation, task -> {
-+                        if (ticks.getAndIncrement() > length) {
-+                           task.cancel();
-+                        } else if (ticks.get() <= 0) {
-+                           if (!introEffect.get()) {
-+                              sourceLocation
-+                                 .getWorld()
-+                                 .spawnParticle(
-+                                    VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.POOF : Particle.valueOf("EXPLOSION_NORMAL"),
-+                                    sourceLocation,
-+                                    3,
-+                                    0.1,
-+                                    0.1,
-+                                    0.1,
-+                                    0.01
-+                                 );
-+                              introEffect.set(true);
-+                           }
-+                        } else {
-+                           for (byte var1 = 0; var1 <= 90; var1 += 3) {
-+                              if (var1 == 0) {
-+                                 sourceLocation
-+                                    .getWorld()
-+                                    .spawnParticle(
-+                                       VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
-+                                       sourceLocation.clone().add(0.0, 0.0 - ticks.get() / (325.0 * (1.0 + -(ticks.get() / 100.0))), 0.0),
-+                                       1,
-+                                       0.05 * (1.0 + size),
-+                                       0.025,
-+                                       0.05 * (1.0 + size),
-+                                       new DustOptions(Color.fromRGB(50, 0, 75), 1.0F)
-+                                    );
-+                              }
- 
+-
 -                           public void run() {
 -                              if (this.ticks++ > this.length) {
 -                                 this.cancel();
@@ -651,6 +1013,52 @@ index 7206007..08d11de 100644
 -                                       this.sourceLocation.getWorld().spawnParticle(Particle.END_ROD, var2, 0, 0.0, 0.0, 0.0, 0.0);
 -                                    }
 -                                 }
++                     // Luma start - Folia support
++                     AtomicBoolean introEffect = new AtomicBoolean(false);
++                     AtomicInteger ticks = new AtomicInteger(-6);
++                     int length = 50;
++                     double size = 0.3 * Math.max(Pinata.RANDOM.nextDouble(), 0.6);
++                     final Location sourceLocation = Pinata.this.pinata
++                         .getLocation()
++                         .add(
++                             Pinata.RANDOM.nextBoolean() ? Pinata.RANDOM.nextDouble() * 3.0 : Pinata.RANDOM.nextDouble() * 3.0 - 3.0,
++                             Pinata.RANDOM.nextDouble() * 2.0 + 2.0,
++                             Pinata.RANDOM.nextBoolean() ? Pinata.RANDOM.nextDouble() * 3.0 : Pinata.RANDOM.nextDouble() * 3.0 - 3.0
++                         );
++                     ScheduleHelper.runTaskTimer(sourceLocation, task -> {
++                        if (ticks.getAndIncrement() > length) {
++                           task.cancel();
++                        } else if (ticks.get() <= 0) {
++                           if (!introEffect.get()) {
++                              sourceLocation
++                                  .getWorld()
++                                  .spawnParticle(
++                                      VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.POOF : Particle.valueOf("EXPLOSION_NORMAL"),
++                                      sourceLocation,
++                                      3,
++                                      0.1,
++                                      0.1,
++                                      0.1,
++                                      0.01
++                                  );
++                              introEffect.set(true);
++                           }
++                        } else {
++                           for (byte var1 = 0; var1 <= 90; var1 += 3) {
++                              if (var1 == 0) {
++                                 sourceLocation
++                                     .getWorld()
++                                     .spawnParticle(
++                                         VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.DUST : Particle.valueOf("REDSTONE"),
++                                         sourceLocation.clone().add(0.0, 0.0 - ticks.get() / (325.0 * (1.0 + -(ticks.get() / 100.0))), 0.0),
++                                         1,
++                                         0.05 * (1.0 + size),
++                                         0.025,
++                                         0.05 * (1.0 + size),
++                                         new DustOptions(Color.fromRGB(50, 0, 75), 1.0F)
++                                     );
++                              }
++
 +                              if (ticks.get() == 1) {
 +                                 Location var2 = sourceLocation.clone();
 +                                 var2.setX(sourceLocation.getX() + Math.cos(var1) * size);
@@ -666,7 +1074,7 @@ index 7206007..08d11de 100644
                    }
                 }
              }
-@@ -1033,30 +1054,40 @@ public class Pinata {
+@@ -1047,30 +1067,40 @@ public class Pinata {
           PinataParty.getInstance().getPinatas().remove(this);
        }
  
@@ -720,7 +1128,25 @@ index 7206007..08d11de 100644
        }
     }
  
-@@ -1138,41 +1169,40 @@ public class Pinata {
+@@ -1091,14 +1121,14 @@ public class Pinata {
+             }
+ 
+             if (this.CONFIG_MATERIAL_WHITELIST
+-               && !this.CONFIG_MATERIAL_WHITELIST_MATERIALS.contains(var3.getInventory().getItemInMainHand().getType().toString())) {
++                && !this.CONFIG_MATERIAL_WHITELIST_MATERIALS.contains(var3.getInventory().getItemInMainHand().getType().toString())) {
+                new PluginMessage("incorrect-material").applyColor().send(var3);
+                return;
+             }
+ 
+             if (this.CONFIG_COOLDOWN_PER_PLAYER
+-               && this.lastHitTimes.containsKey(var3.getUniqueId())
+-               && this.lastHitTimes.get(var3.getUniqueId()).longValue() + this.CONFIG_COOLDOWN_TIME * 1000.0 > System.currentTimeMillis()) {
++                && this.lastHitTimes.containsKey(var3.getUniqueId())
++                && this.lastHitTimes.get(var3.getUniqueId()).longValue() + this.CONFIG_COOLDOWN_TIME * 1000.0 > System.currentTimeMillis()) {
+                return;
+             }
+ 
+@@ -1152,52 +1182,51 @@ public class Pinata {
              }
  
              new PluginSound("pinata-abilities.teleport.sound").send(this.pinata);
@@ -768,21 +1194,21 @@ index 7206007..08d11de 100644
 +               for (double var1x = 0.0; var1x < Math.PI * 2; var1x += Math.PI / 16) {
 +                  if (VersionHelper.isRunningVersionSameOrNewer("1.21.10")) {
 +                     Pinata.this.pinata
-+                             .getWorld()
-+                             .spawnParticle(
-+                                     Particle.INSTANT_EFFECT,
-+                                     loc1.clone().add(r * Math.cos(var1x), j.get(), r * Math.sin(var1x)),
-+                                     0,
-+                                     new Spell(Color.WHITE, 1.0F)
-+                             );
++                         .getWorld()
++                         .spawnParticle(
++                             Particle.INSTANT_EFFECT,
++                             loc1.clone().add(r * Math.cos(var1x), j.get(), r * Math.sin(var1x)),
++                             0,
++                             new Spell(Color.WHITE, 1.0F)
++                         );
 +                  } else {
 +                     Pinata.this.pinata
-+                             .getWorld()
-+                             .spawnParticle(
-+                                     VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.INSTANT_EFFECT : Particle.valueOf("SPELL_INSTANT"),
-+                                     loc1.clone().add(r * Math.cos(var1x), j.get(), r * Math.sin(var1x)),
-+                                     0
-+                             );
++                         .getWorld()
++                         .spawnParticle(
++                             VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.INSTANT_EFFECT : Particle.valueOf("SPELL_INSTANT"),
++                             loc1.clone().add(r * Math.cos(var1x), j.get(), r * Math.sin(var1x)),
++                             0
++                         );
                    }
 -               })
 -               .runTaskTimer(PinataParty.getInstance(), 0L, 1L);
@@ -792,9 +1218,87 @@ index 7206007..08d11de 100644
 +            // Luma end - Folia support
 +            this.pinata.teleportAsync(var8); // Luma - Folia support
              new PluginMessage("pinata.teleport")
-                .applyPlaceholders(
-                   "%x%",
-@@ -1253,12 +1283,14 @@ public class Pinata {
+-               .applyPlaceholders(
+-                  "%x%",
+-                  "" + this.pinata.getLocation().getBlockX(),
+-                  "%y%",
+-                  "" + this.pinata.getLocation().getBlockY(),
+-                  "%z%",
+-                  "" + this.pinata.getLocation().getBlockZ()
+-               )
+-               .applyColor()
+-               .send(Bukkit.getOnlinePlayers());
++                .applyPlaceholders(
++                    "%x%",
++                    "" + this.pinata.getLocation().getBlockX(),
++                    "%y%",
++                    "" + this.pinata.getLocation().getBlockY(),
++                    "%z%",
++                    "" + this.pinata.getLocation().getBlockZ()
++                )
++                .applyColor()
++                .send(Bukkit.getOnlinePlayers());
+          }
+       }
+ 
+@@ -1212,14 +1241,14 @@ public class Pinata {
+          this.pinata.getWorld().spawnParticle(Particle.CRIT, this.pinata.getLocation(), 34, 0.75, 0.75, 0.75, 0.0);
+ 
+          for (Entity var17 : this.pinata
+-            .getNearbyEntities(this.CONFIG_ABILITIES_KNOCKBACK_RADIUS, this.CONFIG_ABILITIES_KNOCKBACK_RADIUS, this.CONFIG_ABILITIES_KNOCKBACK_RADIUS)) {
++             .getNearbyEntities(this.CONFIG_ABILITIES_KNOCKBACK_RADIUS, this.CONFIG_ABILITIES_KNOCKBACK_RADIUS, this.CONFIG_ABILITIES_KNOCKBACK_RADIUS)) {
+             if (var17 instanceof Player && !var17.hasMetadata("NPC")) {
+                Vector var19 = var17.getLocation()
+-                  .toVector()
+-                  .subtract(this.pinata.getLocation().toVector())
+-                  .normalize()
+-                  .multiply(this.CONFIG_ABILITIES_KNOCKBACK_FORCE)
+-                  .setY(this.CONFIG_ABILITIES_KNOCKBACK_FORCE * 0.3);
++                   .toVector()
++                   .subtract(this.pinata.getLocation().toVector())
++                   .normalize()
++                   .multiply(this.CONFIG_ABILITIES_KNOCKBACK_FORCE)
++                   .setY(this.CONFIG_ABILITIES_KNOCKBACK_FORCE * 0.3);
+                if (Double.isFinite(var19.getX()) && Double.isFinite(var19.getY()) && Double.isFinite(var19.getZ())) {
+                   var17.setVelocity(var19);
+                }
+@@ -1240,16 +1269,16 @@ public class Pinata {
+             this.pinata.getWorld().spawnParticle(Particle.INSTANT_EFFECT, this.pinata.getLocation(), 34, 0.75, 0.75, 0.75, 0.0, new Spell(Color.WHITE, 1.0F));
+          } else {
+             this.pinata
+-               .getWorld()
+-               .spawnParticle(
+-                  VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.INSTANT_EFFECT : Particle.valueOf("SPELL_INSTANT"),
+-                  this.pinata.getLocation(),
+-                  34,
+-                  0.75,
+-                  0.75,
+-                  0.75,
+-                  0.0
+-               );
++                .getWorld()
++                .spawnParticle(
++                    VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.INSTANT_EFFECT : Particle.valueOf("SPELL_INSTANT"),
++                    this.pinata.getLocation(),
++                    34,
++                    0.75,
++                    0.75,
++                    0.75,
++                    0.0
++                );
+          }
+       }
+ 
+@@ -1261,18 +1290,20 @@ public class Pinata {
+          }
+ 
+          int var15 = (int)(
+-            this.CONFIG_ABILITIES_BABY_TRANSFORM_LENGTH_MINIMUM * 20.0
+-               + RANDOM.nextDouble()
+-                  * (this.CONFIG_ABILITIES_BABY_TRANSFORM_LENGTH_MAXIMUM * 20.0 - this.CONFIG_ABILITIES_BABY_TRANSFORM_LENGTH_MINIMUM * 20.0 + 1.0)
++             this.CONFIG_ABILITIES_BABY_TRANSFORM_LENGTH_MINIMUM * 20.0
++                 + RANDOM.nextDouble()
++                 * (this.CONFIG_ABILITIES_BABY_TRANSFORM_LENGTH_MAXIMUM * 20.0 - this.CONFIG_ABILITIES_BABY_TRANSFORM_LENGTH_MINIMUM * 20.0 + 1.0)
           );
           new PluginSound("pinata-abilities.baby-transform.transform-in-sound").send(this.pinata);
           this.pinata.setBaby();
@@ -810,23 +1314,67 @@ index 7206007..08d11de 100644
        }
  
        if (PinataParty.getInstance().checkForAbility(RANDOM, "speed-up")) {
-@@ -1306,13 +1338,13 @@ public class Pinata {
+@@ -1283,8 +1314,8 @@ public class Pinata {
+          }
+ 
+          int var16 = (int)(
+-            this.CONFIG_ABILITIES_SPEED_UP_LENGTH_MINIMUM * 20.0
+-               + Math.random() * (this.CONFIG_ABILITIES_SPEED_UP_LENGTH_MAXIMUM * 20.0 - this.CONFIG_ABILITIES_SPEED_UP_LENGTH_MINIMUM * 20.0 + 1.0)
++             this.CONFIG_ABILITIES_SPEED_UP_LENGTH_MINIMUM * 20.0
++                 + Math.random() * (this.CONFIG_ABILITIES_SPEED_UP_LENGTH_MAXIMUM * 20.0 - this.CONFIG_ABILITIES_SPEED_UP_LENGTH_MINIMUM * 20.0 + 1.0)
+          );
+          if (this.cachedSpeedUpSpeedPotion == null) {
+             this.cachedSpeedUpSpeedPotion = new PotionEffect(PotionEffectType.SPEED, var16, this.CONFIG_ABILITIES_SPEED_UP_LEVEL - 1, true, false);
+@@ -1292,12 +1323,12 @@ public class Pinata {
+ 
+          if (this.cachedSpeedUpDolphinsGracePotion == null && VersionHelper.isRunningVersionSameOrNewer("1.13.0")) {
+             this.cachedSpeedUpDolphinsGracePotion = new PotionEffect(
+-               PotionEffectType.DOLPHINS_GRACE, var16, this.CONFIG_ABILITIES_SPEED_UP_LEVEL - 1, true, false, false
++                PotionEffectType.DOLPHINS_GRACE, var16, this.CONFIG_ABILITIES_SPEED_UP_LEVEL - 1, true, false, false
+             );
+          }
+ 
+          for (Entity var20 : this.pinata
+-            .getNearbyEntities(this.CONFIG_ABILITIES_SPEED_UP_RADIUS, this.CONFIG_ABILITIES_SPEED_UP_RADIUS, this.CONFIG_ABILITIES_SPEED_UP_RADIUS)) {
++             .getNearbyEntities(this.CONFIG_ABILITIES_SPEED_UP_RADIUS, this.CONFIG_ABILITIES_SPEED_UP_RADIUS, this.CONFIG_ABILITIES_SPEED_UP_RADIUS)) {
+             if (var20 instanceof Player && !var20.hasMetadata("NPC")) {
+                Player var21 = (Player)var20;
+                var21.addPotionEffect(this.cachedSpeedUpSpeedPotion);
+@@ -1320,86 +1351,100 @@ public class Pinata {
           var7.add(0.0, 1.0, 0.0);
        }
  
 -      if (var6.equals(EWhitelistType.TELEPORT)) {
 +      if (var6.equals(me.hexedhero.pp.enums.EWhitelistType.TELEPORT)) {
           return var7.getBlock().getType() == Material.AIR
-                && var7.clone().add(0.0, -1.0, 0.0).getBlock().getType() != Material.AIR
-                && this.isMaterialWhitelistedForTeleport(var7.clone().add(0.0, -1.0, 0.0).getBlock().getType())
-             ? var7
-             : (var1 > 25 ? null : this.findLocation(var1, var2, var4, var6));
+-               && var7.clone().add(0.0, -1.0, 0.0).getBlock().getType() != Material.AIR
+-               && this.isMaterialWhitelistedForTeleport(var7.clone().add(0.0, -1.0, 0.0).getBlock().getType())
+-            ? var7
+-            : (var1 > 25 ? null : this.findLocation(var1, var2, var4, var6));
 -      } else if (var6.equals(EWhitelistType.PATHFIND)) {
++             && var7.clone().add(0.0, -1.0, 0.0).getBlock().getType() != Material.AIR
++             && this.isMaterialWhitelistedForTeleport(var7.clone().add(0.0, -1.0, 0.0).getBlock().getType())
++             ? var7
++             : (var1 > 25 ? null : this.findLocation(var1, var2, var4, var6));
 +      } else if (var6.equals(me.hexedhero.pp.enums.EWhitelistType.PATHFIND)) {
           return var7.getBlock().getType() == Material.AIR
-                && var7.clone().add(0.0, -1.0, 0.0).getBlock().getType() != Material.AIR
-                && this.isMaterialWhitelistedForPathfind(var7.clone().add(0.0, -1.0, 0.0).getBlock().getType())
-@@ -1328,64 +1360,78 @@ public class Pinata {
+-               && var7.clone().add(0.0, -1.0, 0.0).getBlock().getType() != Material.AIR
+-               && this.isMaterialWhitelistedForPathfind(var7.clone().add(0.0, -1.0, 0.0).getBlock().getType())
+-            ? var7
+-            : (var1 > 25 ? null : this.findLocation(var1, var2, var4, var6));
++             && var7.clone().add(0.0, -1.0, 0.0).getBlock().getType() != Material.AIR
++             && this.isMaterialWhitelistedForPathfind(var7.clone().add(0.0, -1.0, 0.0).getBlock().getType())
++             ? var7
++             : (var1 > 25 ? null : this.findLocation(var1, var2, var4, var6));
+       } else {
+          return var7.getBlock().getType() == Material.AIR && var7.clone().add(0.0, -1.0, 0.0).getBlock().getType() != Material.AIR
+-            ? var7
+-            : (var1 > 25 ? null : this.findLocation(var1, var2, var4, var6));
++             ? var7
++             : (var1 > 25 ? null : this.findLocation(var1, var2, var4, var6));
+       }
+    }
+ 
     public void triggerDeath() {
        Bukkit.getPluginManager().callEvent(new PinataDieEvent(this));
        this.remove(true);
@@ -855,27 +1403,27 @@ index 7206007..08d11de 100644
 +      // Luma start - Folia support
 +      ScheduleHelper.runTask(this.pinata, () -> {
 +         this.pinata
-+                 .getWorld()
-+                 .spawnParticle(
-+                         VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.EXPLOSION : Particle.valueOf("EXPLOSION_LARGE"),
-+                         this.pinata.getLocation().add(0.0, 0.7, 0.0),
-+                         16,
-+                         2.0,
-+                         2.0,
-+                         2.0
-+                 );
++             .getWorld()
++             .spawnParticle(
++                 VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.EXPLOSION : Particle.valueOf("EXPLOSION_LARGE"),
++                 this.pinata.getLocation().add(0.0, 0.7, 0.0),
++                 16,
++                 2.0,
++                 2.0,
++                 2.0
++             );
 +         this.pinata.getWorld().spawnParticle(Particle.END_ROD, this.pinata.getLocation().add(0.0, 0.7, 0.0), 32, 0.0, 0.0, 0.0, 0.3);
 +         this.pinata
-+                 .getWorld()
-+                 .spawnParticle(
-+                         VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.FIREWORK : Particle.valueOf("FIREWORKS_SPARK"),
-+                         this.pinata.getLocation().add(0.0, 0.7, 0.0),
-+                         32,
-+                         0.0,
-+                         0.0,
-+                         0.0,
-+                         0.3
-+                 );
++             .getWorld()
++             .spawnParticle(
++                 VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? Particle.FIREWORK : Particle.valueOf("FIREWORKS_SPARK"),
++                 this.pinata.getLocation().add(0.0, 0.7, 0.0),
++                 32,
++                 0.0,
++                 0.0,
++                 0.0,
++                 0.3
++             );
 +      });
 +      // Luma end - Folia support
        if (this.lastHitter != null) {
@@ -938,18 +1486,18 @@ index 7206007..08d11de 100644
 +            task.cancel();
 +         } else {
 +            Firework var1 = (Firework) loc
-+                    .getWorld()
-+                    .spawnEntity(
-+                            loc.clone().add((Pinata.RANDOM.nextDouble() - 0.5) * 2.0 * r, 0.0, (Pinata.RANDOM.nextDouble() - 0.5) * 2.0 * r),
-+                            VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? EntityType.FIREWORK_ROCKET : EntityType.valueOf("FIREWORK")
-+                    );
++                .getWorld()
++                .spawnEntity(
++                    loc.clone().add((Pinata.RANDOM.nextDouble() - 0.5) * 2.0 * r, 0.0, (Pinata.RANDOM.nextDouble() - 0.5) * 2.0 * r),
++                    VersionHelper.isRunningVersionSameOrNewer("1.20.5") ? EntityType.FIREWORK_ROCKET : EntityType.valueOf("FIREWORK")
++                );
 +            FireworkMeta var2 = var1.getFireworkMeta();
 +            var2.setPower(2);
 +            var2.addEffect(
-+                    FireworkEffect.builder()
-+                            .with(Type.BALL_LARGE)
-+                            .withColor(Pinata.FIREWORK_COLORS[Pinata.RANDOM.nextInt(Pinata.FIREWORK_COLORS.length)])
-+                            .build()
++                FireworkEffect.builder()
++                    .with(Type.BALL_LARGE)
++                    .withColor(Pinata.FIREWORK_COLORS[Pinata.RANDOM.nextInt(Pinata.FIREWORK_COLORS.length)])
++                    .build()
 +            );
 +            var1.setMetadata("PinataParty", new FixedMetadataValue(PinataParty.getInstance(), true));
 +            var1.setFireworkMeta(var2);
@@ -960,7 +1508,7 @@ index 7206007..08d11de 100644
        new PluginMessage("die").applyColor().send(Bukkit.getOnlinePlayers());
        this.playBeat("death-beat");
     }
-@@ -1414,12 +1460,11 @@ public class Pinata {
+@@ -1428,13 +1473,12 @@ public class Pinata {
  
        for (String var9 : var2.getKeys(false)) {
           if (!var9.equalsIgnoreCase("main-note")) {
@@ -978,3 +1526,6 @@ index 7206007..08d11de 100644
           }
        }
     }
+-}
++}
+\ No newline at end of file
