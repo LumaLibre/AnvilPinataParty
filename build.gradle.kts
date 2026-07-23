@@ -32,7 +32,7 @@ dependencies {
 
     implementation("org.bstats:bstats-bukkit:3.1.0")
 
-    val sbLib = "2.7.4"
+    val sbLib = "2.8.1"
     implementation("net.megavex:scoreboard-library-api:$sbLib")
     runtimeOnly("net.megavex:scoreboard-library-implementation:$sbLib")
 }
